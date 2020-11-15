@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[32,)"
+issueTrackerURL = "https://github.com/KubeJS-Mods/KubeJS-Mekanism/issues"
+license = "GNU LGPLv3"
+
+[[mods]]
+modId = "kubejs_mekanism"
+version = "${file.jarVersion}"
+displayName = "KubeJS Mekanism"
+authors = "LatvianModder"
+description = '''
+KubeJS Mekanism integration
+'''
+license = "GNU LGPLv3"
+
+[[dependencies.kubejs_mekanism]]
+modId = "kubejs"
+mandatory = true
+versionRange = "[1604,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.kubejs_mekanism]]
+modId = "mekanism"
+mandatory = true
+versionRange = "[1,)"
+ordering = "AFTER"
+side = "BOTH"
