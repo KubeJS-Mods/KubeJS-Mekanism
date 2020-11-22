@@ -5,70 +5,43 @@ import com.google.gson.JsonObject;
 import dev.latvian.kubejs.item.ingredient.IngredientStackJS;
 import dev.latvian.kubejs.recipe.RecipeJS;
 import dev.latvian.kubejs.util.ListJS;
+import mekanism.api.recipes.inputs.chemical.GasStackIngredient;
 
 /**
  * @author LatvianModder
  */
-public class MekanismMetallurgicInfusingRecipeJS extends RecipeJS
+public class MekanismItemAndGasToItemRecipeJS extends RecipeJS
 {
-	public String infusionTag = "mekanism:redstone";
-	public int infusionAmount = 10;
+	public GasStackIngredient inputGas;
 
 	@Override
 	public void create(ListJS args)
 	{
 		outputItems.add(parseResultItem(args.get(0)));
 		inputItems.add(parseIngredientItem(args.get(1)).asIngredientStack());
-
-		if (args.size() >= 3)
-		{
-			infusionTag = args.get(2).toString();
-
-			if (args.size() >= 4)
-			{
-				infusionAmount = ((Number) args.get(3)).intValue();
-			}
-		}
+		inputGas = KubeJSMekanism.parseGas(args.get(2));
 	}
 
 	@Override
 	public void deserialize()
 	{
 		outputItems.add(parseResultItem(json.get("output")));
-		inputItems.add(parseIngredientItem(json.get("itemInput")).asIngredientStack());
-
-		if (json.has("infusionInput"))
-		{
-			JsonObject o = json.get("infusionInput").getAsJsonObject();
-
-			if (o.has("tag"))
-			{
-				infusionTag = o.get("tag").getAsString();
-			}
-
-			if (o.has("amount"))
-			{
-				infusionAmount = o.get("amount").getAsInt();
-			}
-		}
+		inputItems.add(parseIngredientItem(json.get("itemInput")));
+		inputGas = KubeJSMekanism.parseGas(json.get("gasInput"));
 	}
 
 	@Override
 	public void serialize()
 	{
-		if (serializeOutputs)
-		{
-			json.add("output", outputItems.get(0).toResultJson());
-		}
-
 		if (serializeInputs)
 		{
 			json.add("itemInput", inputItems.get(0).toJson());
+			json.add("gasInput", inputGas.serialize());
+		}
 
-			JsonObject o = new JsonObject();
-			o.addProperty("tag", infusionTag);
-			o.addProperty("amount", infusionAmount);
-			json.add("infusionInput", o);
+		if (serializeOutputs)
+		{
+			json.add("output", outputItems.get(0).toResultJson());
 		}
 	}
 

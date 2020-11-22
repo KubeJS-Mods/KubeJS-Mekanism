@@ -2,6 +2,7 @@ package dev.latvian.kubejs.mekanism;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.latvian.kubejs.item.ItemStackJS;
 import dev.latvian.kubejs.item.ingredient.IngredientStackJS;
 import dev.latvian.kubejs.recipe.RecipeJS;
 import dev.latvian.kubejs.util.ListJS;
@@ -9,11 +10,8 @@ import dev.latvian.kubejs.util.ListJS;
 /**
  * @author LatvianModder
  */
-public class MekanismMetallurgicInfusingRecipeJS extends RecipeJS
+public class MekanismSawingRecipeJS extends RecipeJS
 {
-	public String infusionTag = "mekanism:redstone";
-	public int infusionAmount = 10;
-
 	@Override
 	public void create(ListJS args)
 	{
@@ -22,34 +20,26 @@ public class MekanismMetallurgicInfusingRecipeJS extends RecipeJS
 
 		if (args.size() >= 3)
 		{
-			infusionTag = args.get(2).toString();
-
-			if (args.size() >= 4)
-			{
-				infusionAmount = ((Number) args.get(3)).intValue();
-			}
+			outputItems.add(parseResultItem(args.get(2)));
 		}
 	}
 
 	@Override
 	public void deserialize()
 	{
-		outputItems.add(parseResultItem(json.get("output")));
-		inputItems.add(parseIngredientItem(json.get("itemInput")).asIngredientStack());
+		outputItems.add(parseResultItem(json.get("mainOutput")));
+		inputItems.add(parseIngredientItem(json.get("input")).asIngredientStack());
 
-		if (json.has("infusionInput"))
+		if (json.has("secondaryOutput"))
 		{
-			JsonObject o = json.get("infusionInput").getAsJsonObject();
+			ItemStackJS stackJS = parseResultItem(json.get("secondaryOutput"));
 
-			if (o.has("tag"))
+			if (json.has("secondaryChance"))
 			{
-				infusionTag = o.get("tag").getAsString();
+				stackJS.setChance(json.get("secondaryChance").getAsDouble());
 			}
 
-			if (o.has("amount"))
-			{
-				infusionAmount = o.get("amount").getAsInt();
-			}
+			outputItems.add(stackJS);
 		}
 	}
 
@@ -58,17 +48,21 @@ public class MekanismMetallurgicInfusingRecipeJS extends RecipeJS
 	{
 		if (serializeOutputs)
 		{
-			json.add("output", outputItems.get(0).toResultJson());
+			json.add("mainOutput", outputItems.get(0).toResultJson());
+
+			if (outputItems.size() >= 2)
+			{
+				ItemStackJS stackJS = outputItems.get(1).getCopy();
+				double c = stackJS.getChance();
+				stackJS.setChance(-1D);
+				json.add("secondaryOutput", stackJS.toResultJson());
+				json.addProperty("secondaryChance", c);
+			}
 		}
 
 		if (serializeInputs)
 		{
-			json.add("itemInput", inputItems.get(0).toJson());
-
-			JsonObject o = new JsonObject();
-			o.addProperty("tag", infusionTag);
-			o.addProperty("amount", infusionAmount);
-			json.add("infusionInput", o);
+			json.add("input", inputItems.get(0).toJson());
 		}
 	}
 

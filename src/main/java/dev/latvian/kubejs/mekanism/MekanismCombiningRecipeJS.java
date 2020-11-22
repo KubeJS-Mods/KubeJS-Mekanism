@@ -1,21 +1,17 @@
 package dev.latvian.kubejs.mekanism;
 
-import dev.latvian.kubejs.item.ItemStackJS;
-import dev.latvian.kubejs.item.ingredient.IngredientJS;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import dev.latvian.kubejs.item.ingredient.IngredientStackJS;
 import dev.latvian.kubejs.recipe.RecipeExceptionJS;
 import dev.latvian.kubejs.recipe.RecipeJS;
 import dev.latvian.kubejs.util.ListJS;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.List;
 
 /**
  * @author LatvianModder
  */
 public class MekanismCombiningRecipeJS extends RecipeJS
 {
-	public int inputAmount1, inputAmount2;
-
 	@Override
 	public void create(ListJS args)
 	{
@@ -24,100 +20,45 @@ public class MekanismCombiningRecipeJS extends RecipeJS
 			throw new RecipeExceptionJS("Mekanism combining recipe has to have 3 arguments - ouptut, input 1, input 2!");
 		}
 
-		ItemStackJS output = ItemStackJS.of(args.get(0));
-
-		if (output.isEmpty())
-		{
-			throw new RecipeExceptionJS("Mekanism combining recipe result can't be empty!");
-		}
-
-		outputItems.add(output);
-
-		ListJS in = ListJS.orSelf(args.get(1));
-
-		IngredientJS i1 = IngredientJS.of(args.get(1));
-
-		if (!i1.isEmpty())
-		{
-			int c = i1.getCount();
-
-			if (c > 1)
-			{
-				inputItems.add(i1.count(1));
-				inputAmount1 = c;
-			}
-			else
-			{
-				inputItems.add(i1);
-				inputAmount1 = 1;
-			}
-		}
-		else
-		{
-			throw new RecipeExceptionJS("Mekanism combining recipe ingredient #1 " + args.get(1) + " is not a valid ingredient!");
-		}
-
-		IngredientJS i2 = IngredientJS.of(args.get(1));
-
-		if (!i2.isEmpty())
-		{
-			int c = i2.getCount();
-
-			if (c > 1)
-			{
-				inputItems.add(i2.count(1));
-				inputAmount2 = c;
-			}
-			else
-			{
-				inputItems.add(i2);
-				inputAmount2 = 1;
-			}
-		}
-		else
-		{
-			throw new RecipeExceptionJS("Mekanism combining recipe ingredient #2 " + args.get(2) + " is not a valid ingredient!");
-		}
+		outputItems.add(parseResultItem(args.get(0)));
+		inputItems.add(parseIngredientItem(args.get(1)).asIngredientStack());
+		inputItems.add(parseIngredientItem(args.get(2)).asIngredientStack());
 	}
 
 	@Override
 	public void deserialize()
 	{
-		ItemStackJS output = ItemStackJS.resultFromRecipeJson(json.get("output"));
-
-		if (output.isEmpty())
-		{
-			throw new RecipeExceptionJS("Mekanism machine recipe result can't be empty!");
-		}
-
-		outputItems.add(output);
-
-		List<Pair<IngredientJS, Integer>> list1 = MekanismMachineRecipeJS.deserializeIngredient(json.get("mainInput"));
-
-		if (list1.isEmpty())
-		{
-			throw new RecipeExceptionJS("Mekanism machine recipe ingredient " + json.get("mainInput") + " is not a valid ingredient!");
-		}
-
-		List<Pair<IngredientJS, Integer>> list2 = MekanismMachineRecipeJS.deserializeIngredient(json.get("extraInput"));
-
-		if (list2.isEmpty())
-		{
-			throw new RecipeExceptionJS("Mekanism machine recipe ingredient " + json.get("extraInput") + " is not a valid ingredient!");
-		}
-
-		inputItems.add(list1.get(0).getLeft());
-		inputAmount1 = list1.get(0).getRight();
-
-		inputItems.add(list2.get(0).getLeft());
-		inputAmount2 = list2.get(0).getRight();
+		outputItems.add(parseResultItem(json.get("output")));
+		inputItems.add(parseIngredientItem(json.get("mainInput")).asIngredientStack());
+		inputItems.add(parseIngredientItem(json.get("extraInput")).asIngredientStack());
 	}
 
 	@Override
 	public void serialize()
 	{
-		json.add("mainInput", MekanismMachineRecipeJS.serializeIngredient(inputItems.get(0), inputAmount1));
-		json.add("extraInput", MekanismMachineRecipeJS.serializeIngredient(inputItems.get(1), inputAmount2));
-		json.add("output", outputItems.get(0).toResultJson());
+		if (serializeOutputs)
+		{
+			json.add("output", outputItems.get(0).toResultJson());
+		}
+
+		if (serializeInputs)
+		{
+			json.add("mainInput", inputItems.get(0).toJson());
+			json.add("extraInput", inputItems.get(1).toJson());
+		}
+	}
+
+	@Override
+	public JsonElement serializeIngredientStack(IngredientStackJS in)
+	{
+		JsonObject json = new JsonObject();
+		json.add("ingredient", in.ingredient.toJson());
+
+		if (in.getCount() > 1)
+		{
+			json.addProperty("amount", in.getCount());
+		}
+
+		return json;
 	}
 }
