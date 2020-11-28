@@ -1,15 +1,12 @@
 package dev.latvian.kubejs.mekanism;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.latvian.kubejs.item.ingredient.IngredientStackJS;
-import dev.latvian.kubejs.recipe.RecipeJS;
 import dev.latvian.kubejs.util.ListJS;
 
 /**
  * @author LatvianModder
  */
-public class MekanismMetallurgicInfusingRecipeJS extends RecipeJS
+public class MekanismMetallurgicInfusingRecipeJS extends MekanismRecipeJS
 {
 	public String infusionTag = "mekanism:redstone";
 	public int infusionAmount = 10;
@@ -70,19 +67,5 @@ public class MekanismMetallurgicInfusingRecipeJS extends RecipeJS
 			o.addProperty("amount", infusionAmount);
 			json.add("infusionInput", o);
 		}
-	}
-
-	@Override
-	public JsonElement serializeIngredientStack(IngredientStackJS in)
-	{
-		JsonObject json = new JsonObject();
-		json.add("ingredient", in.ingredient.toJson());
-
-		if (in.getCount() > 1)
-		{
-			json.addProperty("amount", in.getCount());
-		}
-
-		return json;
 	}
 }

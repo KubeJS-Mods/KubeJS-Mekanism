@@ -1,16 +1,12 @@
 package dev.latvian.kubejs.mekanism;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import dev.latvian.kubejs.item.ingredient.IngredientStackJS;
-import dev.latvian.kubejs.recipe.RecipeJS;
 import dev.latvian.kubejs.util.ListJS;
 import mekanism.api.recipes.inputs.chemical.GasStackIngredient;
 
 /**
  * @author LatvianModder
  */
-public class MekanismItemAndGasToItemRecipeJS extends RecipeJS
+public class MekanismItemAndGasToItemRecipeJS extends MekanismRecipeJS
 {
 	public GasStackIngredient inputGas;
 
@@ -19,7 +15,15 @@ public class MekanismItemAndGasToItemRecipeJS extends RecipeJS
 	{
 		outputItems.add(parseResultItem(args.get(0)));
 		inputItems.add(parseIngredientItem(args.get(1)).asIngredientStack());
-		inputGas = KubeJSMekanism.parseGas(args.get(2));
+		inputGas = parseGas(args.get(2));
+	}
+
+	public MekanismItemAndGasToItemRecipeJS inputGas(Object o)
+	{
+		inputGas = parseGas(o);
+		serializeInputs = true;
+		save();
+		return this;
 	}
 
 	@Override
@@ -27,7 +31,7 @@ public class MekanismItemAndGasToItemRecipeJS extends RecipeJS
 	{
 		outputItems.add(parseResultItem(json.get("output")));
 		inputItems.add(parseIngredientItem(json.get("itemInput")));
-		inputGas = KubeJSMekanism.parseGas(json.get("gasInput"));
+		inputGas = parseGas(json.get("gasInput"));
 	}
 
 	@Override
@@ -43,19 +47,5 @@ public class MekanismItemAndGasToItemRecipeJS extends RecipeJS
 		{
 			json.add("output", outputItems.get(0).toResultJson());
 		}
-	}
-
-	@Override
-	public JsonElement serializeIngredientStack(IngredientStackJS in)
-	{
-		JsonObject json = new JsonObject();
-		json.add("ingredient", in.ingredient.toJson());
-
-		if (in.getCount() > 1)
-		{
-			json.addProperty("amount", in.getCount());
-		}
-
-		return json;
 	}
 }

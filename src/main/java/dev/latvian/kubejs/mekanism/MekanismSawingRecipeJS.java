@@ -1,16 +1,12 @@
 package dev.latvian.kubejs.mekanism;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import dev.latvian.kubejs.item.ItemStackJS;
-import dev.latvian.kubejs.item.ingredient.IngredientStackJS;
-import dev.latvian.kubejs.recipe.RecipeJS;
 import dev.latvian.kubejs.util.ListJS;
 
 /**
  * @author LatvianModder
  */
-public class MekanismSawingRecipeJS extends RecipeJS
+public class MekanismSawingRecipeJS extends MekanismRecipeJS
 {
 	@Override
 	public void create(ListJS args)
@@ -64,19 +60,5 @@ public class MekanismSawingRecipeJS extends RecipeJS
 		{
 			json.add("input", inputItems.get(0).toJson());
 		}
-	}
-
-	@Override
-	public JsonElement serializeIngredientStack(IngredientStackJS in)
-	{
-		JsonObject json = new JsonObject();
-		json.add("ingredient", in.ingredient.toJson());
-
-		if (in.getCount() > 1)
-		{
-			json.addProperty("amount", in.getCount());
-		}
-
-		return json;
 	}
 }

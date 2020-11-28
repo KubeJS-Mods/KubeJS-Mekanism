@@ -1,14 +1,8 @@
 package dev.latvian.kubejs.mekanism;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import dev.latvian.kubejs.recipe.RegisterRecipeHandlersEvent;
-import dev.latvian.kubejs.util.MapJS;
-import mekanism.api.recipes.inputs.chemical.GasStackIngredient;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import javax.annotation.Nullable;
 
 /**
  * @author LatvianModder
@@ -46,29 +40,5 @@ public class KubeJSMekanism
 		// reaction = new PressurizedReactionRecipeSerializer(PressurizedReactionIRecipe::new);
 		// rotary = new RotaryRecipeSerializer(new RotaryIRecipe.Factory());
 		event.register("mekanism:sawing", MekanismSawingRecipeJS::new);
-	}
-
-	public static GasStackIngredient parseGas(@Nullable Object o)
-	{
-		if (o instanceof JsonElement)
-		{
-			return GasStackIngredient.deserialize((JsonElement) o);
-		}
-		else if (o instanceof CharSequence)
-		{
-			JsonObject json = new JsonObject();
-			json.addProperty("gas", o.toString());
-			json.addProperty("amount", 1000);
-			return GasStackIngredient.deserialize(json);
-		}
-
-		JsonObject json = MapJS.of(o).toJson();
-
-		if (!json.has("amount"))
-		{
-			json.addProperty("amount", 1000);
-		}
-
-		return GasStackIngredient.deserialize(json);
 	}
 }
