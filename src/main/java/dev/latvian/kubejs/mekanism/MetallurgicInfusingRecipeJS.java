@@ -6,7 +6,7 @@ import dev.latvian.kubejs.util.ListJS;
 /**
  * @author LatvianModder
  */
-public class MekanismMetallurgicInfusingRecipeJS extends MekanismRecipeJS
+public class MetallurgicInfusingRecipeJS extends MekanismRecipeJS
 {
 	public String infusionTag = "mekanism:redstone";
 	public int infusionAmount = 10;

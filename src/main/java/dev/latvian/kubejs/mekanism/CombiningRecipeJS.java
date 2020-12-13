@@ -5,7 +5,7 @@ import dev.latvian.kubejs.util.ListJS;
 /**
  * @author LatvianModder
  */
-public class MekanismCombiningRecipeJS extends MekanismRecipeJS
+public class CombiningRecipeJS extends MekanismRecipeJS
 {
 	@Override
 	public void create(ListJS args)

@@ -6,7 +6,7 @@ import mekanism.api.recipes.inputs.chemical.GasStackIngredient;
 /**
  * @author LatvianModder
  */
-public class MekanismItemAndGasToItemRecipeJS extends MekanismRecipeJS
+public class ItemAndGasToItemRecipeJS extends MekanismRecipeJS
 {
 	public GasStackIngredient inputGas;
 
@@ -15,12 +15,12 @@ public class MekanismItemAndGasToItemRecipeJS extends MekanismRecipeJS
 	{
 		outputItems.add(parseResultItem(args.get(0)));
 		inputItems.add(parseIngredientItem(args.get(1)).asIngredientStack());
-		inputGas = parseGas(args.get(2));
+		inputGas = parseGasIngrdient(args.get(2));
 	}
 
-	public MekanismItemAndGasToItemRecipeJS inputGas(Object o)
+	public ItemAndGasToItemRecipeJS inputGas(Object o)
 	{
-		inputGas = parseGas(o);
+		inputGas = parseGasIngrdient(o);
 		serializeInputs = true;
 		save();
 		return this;
@@ -30,8 +30,8 @@ public class MekanismItemAndGasToItemRecipeJS extends MekanismRecipeJS
 	public void deserialize()
 	{
 		outputItems.add(parseResultItem(json.get("output")));
-		inputItems.add(parseIngredientItem(json.get("itemInput")));
-		inputGas = parseGas(json.get("gasInput"));
+		inputItems.add(parseIngredientItem(json.get("itemInput")).asIngredientStack());
+		inputGas = parseGasIngrdient(json.get("gasInput"));
 	}
 
 	@Override

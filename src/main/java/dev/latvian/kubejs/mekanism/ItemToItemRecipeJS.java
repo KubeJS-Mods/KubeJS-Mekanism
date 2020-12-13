@@ -7,18 +7,18 @@ import dev.latvian.kubejs.util.ListJS;
 /**
  * @author LatvianModder
  */
-public class MekanismItemToItemRecipeJS extends MekanismRecipeJS
+public class ItemToItemRecipeJS extends MekanismRecipeJS
 {
 	public final String inputName;
 	public final String outputName;
 
-	public MekanismItemToItemRecipeJS(String in, String out)
+	public ItemToItemRecipeJS(String in, String out)
 	{
 		inputName = in;
 		outputName = out;
 	}
 
-	public MekanismItemToItemRecipeJS()
+	public ItemToItemRecipeJS()
 	{
 		this("input", "output");
 	}
