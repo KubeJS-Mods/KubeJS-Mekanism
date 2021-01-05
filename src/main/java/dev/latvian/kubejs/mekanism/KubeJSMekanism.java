@@ -27,7 +27,7 @@ public class KubeJSMekanism
 		// activating = new GasToGasRecipeSerializer(ActivatingIRecipe::new);
 		// centrifuging = new GasToGasRecipeSerializer(CentrifugingIRecipe::new);
 		event.register("mekanism:crystallizing", CrystallizingRecipeJS::new);
-		// dissolution = new ChemicalDissolutionRecipeSerializer(ChemicalDissolutionIRecipe::new);
+		event.register("mekanism:dissolution", ChemicalDissolutionRecipeJS::new);
 		event.register("mekanism:compressing", ItemAndGasToItemRecipeJS::new);
 		event.register("mekanism:purifying", ItemAndGasToItemRecipeJS::new);
 		event.register("mekanism:injecting", ItemAndGasToItemRecipeJS::new);

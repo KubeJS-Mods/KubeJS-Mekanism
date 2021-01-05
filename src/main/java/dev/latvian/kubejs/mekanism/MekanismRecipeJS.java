@@ -8,6 +8,7 @@ import dev.latvian.kubejs.recipe.RecipeJS;
 import dev.latvian.kubejs.util.MapJS;
 import mekanism.api.SerializerHelper;
 import mekanism.api.chemical.gas.GasStack;
+import mekanism.api.chemical.merged.BoxedChemicalStack;
 import mekanism.api.recipes.inputs.chemical.GasStackIngredient;
 
 import javax.annotation.Nullable;
@@ -77,6 +78,13 @@ public abstract class MekanismRecipeJS extends RecipeJS
 		}
 
 		return SerializerHelper.deserializeGas(json);
+	}
+
+	public static JsonElement parseChemicalStack(@Nullable Object o)
+	{
+		JsonObject json = new JsonObject();
+		json.add("output", MapJS.of(o).toJson());
+		return SerializerHelper.serializeBoxedChemicalStack(BoxedChemicalStack.box(SerializerHelper.getBoxedChemicalStack(json, "output")));
 	}
 
 	public static JsonObject serializeGasResult(GasStack stack)
