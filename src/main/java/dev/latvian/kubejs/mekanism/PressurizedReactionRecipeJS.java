@@ -17,7 +17,11 @@ public class PressurizedReactionRecipeJS extends MekanismRecipeJS
 	@Override
 	public void deserialize()
 	{
-		outputItems.add(parseResultItem(json.get("itemOutput")));
+		if (json.has("itemOutput"))
+		{
+			outputItems.add(parseResultItem(json.get("itemOutput")));
+		}
+
 		inputItems.add(parseIngredientItem(json.get("itemInput")).asIngredientStack());
 	}
 
@@ -31,7 +35,10 @@ public class PressurizedReactionRecipeJS extends MekanismRecipeJS
 
 		if (serializeOutputs)
 		{
-			json.add("itemOutput", outputItems.get(0).toResultJson());
+			if (outputItems.size() >= 1)
+			{
+				json.add("itemOutput", outputItems.get(0).toResultJson());
+			}
 		}
 	}
 }
