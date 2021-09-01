@@ -6,32 +6,26 @@ import dev.latvian.kubejs.util.ListJS;
 /**
  * @author LatvianModder
  */
-public class SawingRecipeJS extends MekanismRecipeJS
-{
+public class SawingRecipeJS extends MekanismRecipeJS {
 	@Override
-	public void create(ListJS args)
-	{
+	public void create(ListJS args) {
 		outputItems.add(parseResultItem(args.get(0)));
 		inputItems.add(parseIngredientItem(args.get(1)).asIngredientStack());
 
-		if (args.size() >= 3)
-		{
+		if (args.size() >= 3) {
 			outputItems.add(parseResultItem(args.get(2)));
 		}
 	}
 
 	@Override
-	public void deserialize()
-	{
+	public void deserialize() {
 		outputItems.add(parseResultItem(json.get("mainOutput")));
 		inputItems.add(parseIngredientItem(json.get("input")).asIngredientStack());
 
-		if (json.has("secondaryOutput"))
-		{
+		if (json.has("secondaryOutput")) {
 			ItemStackJS stackJS = parseResultItem(json.get("secondaryOutput"));
 
-			if (json.has("secondaryChance"))
-			{
+			if (json.has("secondaryChance")) {
 				stackJS.setChance(json.get("secondaryChance").getAsDouble());
 			}
 
@@ -40,15 +34,12 @@ public class SawingRecipeJS extends MekanismRecipeJS
 	}
 
 	@Override
-	public void serialize()
-	{
-		if (serializeOutputs)
-		{
+	public void serialize() {
+		if (serializeOutputs) {
 			json.add("mainOutput", outputItems.get(0).toResultJson());
 
-			if (outputItems.size() >= 2)
-			{
-				ItemStackJS stackJS = outputItems.get(1).getCopy();
+			if (outputItems.size() >= 2) {
+				ItemStackJS stackJS = outputItems.get(1).copy();
 				double c = stackJS.getChance();
 				stackJS.setChance(-1D);
 				json.add("secondaryOutput", stackJS.toResultJson());
@@ -56,8 +47,7 @@ public class SawingRecipeJS extends MekanismRecipeJS
 			}
 		}
 
-		if (serializeInputs)
-		{
+		if (serializeInputs) {
 			json.add("input", inputItems.get(0).toJson());
 		}
 	}

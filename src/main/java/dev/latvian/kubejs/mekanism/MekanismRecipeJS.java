@@ -16,30 +16,23 @@ import javax.annotation.Nullable;
 /**
  * @author LatvianModder
  */
-public abstract class MekanismRecipeJS extends RecipeJS
-{
+public abstract class MekanismRecipeJS extends RecipeJS {
 	@Override
-	public JsonElement serializeIngredientStack(IngredientStackJS in)
-	{
+	public JsonElement serializeIngredientStack(IngredientStackJS in) {
 		JsonObject json = new JsonObject();
 		json.add("ingredient", in.ingredient.toJson());
 
-		if (in.getCount() > 1)
-		{
+		if (in.getCount() > 1) {
 			json.addProperty("amount", in.getCount());
 		}
 
 		return json;
 	}
 
-	public static GasStackIngredient parseGasIngrdient(@Nullable Object o)
-	{
-		if (o instanceof JsonElement)
-		{
+	public static GasStackIngredient parseGasIngrdient(@Nullable Object o) {
+		if (o instanceof JsonElement) {
 			return GasStackIngredient.deserialize((JsonElement) o);
-		}
-		else if (o instanceof CharSequence)
-		{
+		} else if (o instanceof CharSequence) {
 			JsonObject json = new JsonObject();
 			json.addProperty("gas", o.toString());
 			json.addProperty("amount", 1000);
@@ -48,22 +41,17 @@ public abstract class MekanismRecipeJS extends RecipeJS
 
 		JsonObject json = MapJS.of(o).toJson();
 
-		if (!json.has("amount"))
-		{
+		if (!json.has("amount")) {
 			json.addProperty("amount", 1000);
 		}
 
 		return GasStackIngredient.deserialize(json);
 	}
 
-	public static GasStack parseGasResult(@Nullable Object o)
-	{
-		if (o instanceof JsonObject)
-		{
+	public static GasStack parseGasResult(@Nullable Object o) {
+		if (o instanceof JsonObject) {
 			return SerializerHelper.deserializeGas((JsonObject) o);
-		}
-		else if (o instanceof CharSequence)
-		{
+		} else if (o instanceof CharSequence) {
 			JsonObject json = new JsonObject();
 			json.addProperty("gas", o.toString());
 			json.addProperty("amount", 1000);
@@ -72,29 +60,25 @@ public abstract class MekanismRecipeJS extends RecipeJS
 
 		JsonObject json = MapJS.of(o).toJson();
 
-		if (!json.has("amount"))
-		{
+		if (!json.has("amount")) {
 			json.addProperty("amount", 1000);
 		}
 
 		return SerializerHelper.deserializeGas(json);
 	}
 
-	public static JsonElement parseChemicalStack(@Nullable Object o)
-	{
+	public static JsonElement parseChemicalStack(@Nullable Object o) {
 		JsonObject json = new JsonObject();
 		json.add("output", MapJS.of(o).toJson());
 		return SerializerHelper.serializeBoxedChemicalStack(BoxedChemicalStack.box(SerializerHelper.getBoxedChemicalStack(json, "output")));
 	}
 
-	public static JsonObject serializeGasResult(GasStack stack)
-	{
+	public static JsonObject serializeGasResult(GasStack stack) {
 		return SerializerHelper.serializeGasStack(stack);
 	}
 
 	@Override
-	public IngredientJS convertReplacedInput(int index, IngredientJS oldIngredient, IngredientJS newIngredient)
-	{
+	public IngredientJS convertReplacedInput(int index, IngredientJS oldIngredient, IngredientJS newIngredient) {
 		return newIngredient.asIngredientStack();
 	}
 }

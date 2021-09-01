@@ -7,51 +7,40 @@ import dev.latvian.kubejs.util.ListJS;
 /**
  * @author LatvianModder
  */
-public class ItemToItemRecipeJS extends MekanismRecipeJS
-{
+public class ItemToItemRecipeJS extends MekanismRecipeJS {
 	public final String inputName;
 	public final String outputName;
 
-	public ItemToItemRecipeJS(String in, String out)
-	{
+	public ItemToItemRecipeJS(String in, String out) {
 		inputName = in;
 		outputName = out;
 	}
 
-	public ItemToItemRecipeJS()
-	{
+	public ItemToItemRecipeJS() {
 		this("input", "output");
 	}
 
 	@Override
-	public void create(ListJS args)
-	{
+	public void create(ListJS args) {
 		outputItems.add(parseResultItem(args.get(0)));
 		inputItems.addAll(parseIngredientItemStackList(args.get(1)));
 	}
 
 	@Override
-	public void deserialize()
-	{
+	public void deserialize() {
 		outputItems.add(parseResultItem(json.get(outputName)));
 		inputItems.addAll(parseIngredientItemStackList(json.get(inputName)));
 	}
 
 	@Override
-	public void serialize()
-	{
-		if (serializeInputs)
-		{
-			if (inputItems.size() == 1)
-			{
+	public void serialize() {
+		if (serializeInputs) {
+			if (inputItems.size() == 1) {
 				json.add(inputName, inputItems.get(0).toJson());
-			}
-			else
-			{
+			} else {
 				JsonArray inputArray = new JsonArray();
 
-				for (IngredientJS i : inputItems)
-				{
+				for (IngredientJS i : inputItems) {
 					inputArray.add(i.toJson());
 				}
 
@@ -59,8 +48,7 @@ public class ItemToItemRecipeJS extends MekanismRecipeJS
 			}
 		}
 
-		if (serializeOutputs)
-		{
+		if (serializeOutputs) {
 			json.add(outputName, outputItems.get(0).toResultJson());
 		}
 	}
