@@ -1,4 +1,4 @@
-package dev.latvian.kubejs.mekanism;
+package dev.latvian.kubejs.mekanism.recipe;
 
 import com.google.gson.JsonArray;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;

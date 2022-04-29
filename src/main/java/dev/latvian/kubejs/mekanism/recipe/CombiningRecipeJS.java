@@ -1,4 +1,4 @@
-package dev.latvian.kubejs.mekanism;
+package dev.latvian.kubejs.mekanism.recipe;
 
 import dev.latvian.mods.kubejs.util.ListJS;
 

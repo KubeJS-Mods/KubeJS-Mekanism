@@ -1,4 +1,4 @@
-package dev.latvian.kubejs.mekanism;
+package dev.latvian.kubejs.mekanism.recipe;
 
 import dev.latvian.mods.kubejs.recipe.RecipeExceptionJS;
 import dev.latvian.mods.kubejs.util.ListJS;
@@ -6,7 +6,7 @@ import dev.latvian.mods.kubejs.util.ListJS;
 /**
  * @author LatvianModder
  */
-public class CrystallizingRecipeJS extends MekanismRecipeJS {
+public class OxidizingRecipeJS extends MekanismRecipeJS {
 	@Override
 	public void create(ListJS args) {
 		throw new RecipeExceptionJS("Creation not supported yet!");
@@ -14,13 +14,13 @@ public class CrystallizingRecipeJS extends MekanismRecipeJS {
 
 	@Override
 	public void deserialize() {
-		outputItems.add(parseResultItem(json.get("output")));
+		inputItems.add(parseIngredientItem(json.get("input")).asIngredientStack());
 	}
 
 	@Override
 	public void serialize() {
-		if (serializeOutputs) {
-			json.add("output", outputItems.get(0).toResultJson());
+		if (serializeInputs) {
+			json.add("input", inputItems.get(0).toJson());
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package dev.latvian.kubejs.mekanism;
+package dev.latvian.kubejs.mekanism.recipe;
 
 import dev.latvian.mods.kubejs.util.ListJS;
 import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
@@ -13,11 +13,11 @@ public class ItemAndGasToItemRecipeJS extends MekanismRecipeJS {
 	public void create(ListJS args) {
 		outputItems.add(parseResultItem(args.get(0)));
 		inputItems.add(parseIngredientItem(args.get(1)).asIngredientStack());
-		inputGas = parseGasIngrdient(args.get(2));
+		inputGas = parseGasIngredient(args.get(2));
 	}
 
 	public ItemAndGasToItemRecipeJS inputGas(Object o) {
-		inputGas = parseGasIngrdient(o);
+		inputGas = parseGasIngredient(o);
 		serializeInputs = true;
 		save();
 		return this;
@@ -27,7 +27,7 @@ public class ItemAndGasToItemRecipeJS extends MekanismRecipeJS {
 	public void deserialize() {
 		outputItems.add(parseResultItem(json.get("output")));
 		inputItems.add(parseIngredientItem(json.get("itemInput")).asIngredientStack());
-		inputGas = parseGasIngrdient(json.get("gasInput"));
+		inputGas = parseGasIngredient(json.get("gasInput"));
 	}
 
 	@Override

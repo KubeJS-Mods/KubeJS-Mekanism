@@ -1,5 +1,17 @@
 package dev.latvian.kubejs.mekanism;
 
+import dev.latvian.kubejs.mekanism.recipe.ChemicalDissolutionRecipeJS;
+import dev.latvian.kubejs.mekanism.recipe.ChemicalInfusingRecipeJS;
+import dev.latvian.kubejs.mekanism.recipe.CombiningRecipeJS;
+import dev.latvian.kubejs.mekanism.recipe.CrystallizingRecipeJS;
+import dev.latvian.kubejs.mekanism.recipe.EnergyConversionRecipeJS;
+import dev.latvian.kubejs.mekanism.recipe.GasConversionRecipeJS;
+import dev.latvian.kubejs.mekanism.recipe.ItemAndGasToItemRecipeJS;
+import dev.latvian.kubejs.mekanism.recipe.ItemToItemRecipeJS;
+import dev.latvian.kubejs.mekanism.recipe.MetallurgicInfusingRecipeJS;
+import dev.latvian.kubejs.mekanism.recipe.OxidizingRecipeJS;
+import dev.latvian.kubejs.mekanism.recipe.PressurizedReactionRecipeJS;
+import dev.latvian.kubejs.mekanism.recipe.SawingRecipeJS;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.recipe.RegisterRecipeHandlersEvent;
 import net.minecraft.resources.ResourceLocation;

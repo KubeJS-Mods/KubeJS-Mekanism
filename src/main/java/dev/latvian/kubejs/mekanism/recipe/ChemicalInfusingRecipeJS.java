@@ -1,4 +1,4 @@
-package dev.latvian.kubejs.mekanism;
+package dev.latvian.kubejs.mekanism.recipe;
 
 import dev.latvian.mods.kubejs.util.ListJS;
 import mekanism.api.chemical.gas.GasStack;
@@ -15,15 +15,15 @@ public class ChemicalInfusingRecipeJS extends MekanismRecipeJS {
 	@Override
 	public void create(ListJS args) {
 		gasOutput = parseGasResult(args.get(0));
-		leftGasInput = parseGasIngrdient(args.get(1));
-		rightGasInput = parseGasIngrdient(args.get(2));
+		leftGasInput = parseGasIngredient(args.get(1));
+		rightGasInput = parseGasIngredient(args.get(2));
 	}
 
 	@Override
 	public void deserialize() {
 		gasOutput = parseGasResult(json.get("output"));
-		leftGasInput = parseGasIngrdient(json.get("leftInput"));
-		rightGasInput = parseGasIngrdient(json.get("rightInput"));
+		leftGasInput = parseGasIngredient(json.get("leftInput"));
+		rightGasInput = parseGasIngredient(json.get("rightInput"));
 	}
 
 	public ChemicalInfusingRecipeJS outputGas(Object o) {
@@ -34,14 +34,14 @@ public class ChemicalInfusingRecipeJS extends MekanismRecipeJS {
 	}
 
 	public ChemicalInfusingRecipeJS leftInputGas(Object o) {
-		leftGasInput = parseGasIngrdient(o);
+		leftGasInput = parseGasIngredient(o);
 		serializeInputs = true;
 		save();
 		return this;
 	}
 
 	public ChemicalInfusingRecipeJS rightInputGas(Object o) {
-		rightGasInput = parseGasIngrdient(o);
+		rightGasInput = parseGasIngredient(o);
 		serializeInputs = true;
 		save();
 		return this;

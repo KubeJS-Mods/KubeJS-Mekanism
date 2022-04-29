@@ -1,4 +1,4 @@
-package dev.latvian.kubejs.mekanism;
+package dev.latvian.kubejs.mekanism.recipe;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -30,9 +30,9 @@ public abstract class MekanismRecipeJS extends RecipeJS {
 		return json;
 	}
 
-	public static ChemicalStackIngredient.GasStackIngredient parseGasIngrdient(@Nullable Object o) {
-		if (o instanceof JsonElement) {
-			return IngredientCreatorAccess.gas().deserialize((JsonElement) o);
+	public static ChemicalStackIngredient.GasStackIngredient parseGasIngredient(@Nullable Object o) {
+		if (o instanceof JsonElement json) {
+			return IngredientCreatorAccess.gas().deserialize(json);
 		} else if (o instanceof CharSequence) {
 			JsonObject json = new JsonObject();
 			json.addProperty("gas", o.toString());
@@ -59,7 +59,7 @@ public abstract class MekanismRecipeJS extends RecipeJS {
 			return SerializerHelper.deserializeGas(json);
 		}
 
-		JsonObject json = MapJS.of(o).toJson();
+		JsonObject json = MapJS.json(o);
 
 		if (!json.has("amount")) {
 			json.addProperty("amount", 1000);
@@ -70,7 +70,7 @@ public abstract class MekanismRecipeJS extends RecipeJS {
 
 	public static JsonElement parseChemicalStack(@Nullable Object o) {
 		JsonObject json = new JsonObject();
-		json.add("output", MapJS.of(o).toJson());
+		json.add("output", MapJS.json(o));
 		return SerializerHelper.serializeBoxedChemicalStack(BoxedChemicalStack.box(SerializerHelper.getBoxedChemicalStack(json, "output")));
 	}
 

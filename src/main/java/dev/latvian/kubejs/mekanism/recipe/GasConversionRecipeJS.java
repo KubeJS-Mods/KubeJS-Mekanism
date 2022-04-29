@@ -1,4 +1,4 @@
-package dev.latvian.kubejs.mekanism;
+package dev.latvian.kubejs.mekanism.recipe;
 
 import dev.latvian.mods.kubejs.recipe.RecipeExceptionJS;
 import dev.latvian.mods.kubejs.util.ListJS;
@@ -6,7 +6,7 @@ import dev.latvian.mods.kubejs.util.ListJS;
 /**
  * @author LatvianModder
  */
-public class OxidizingRecipeJS extends MekanismRecipeJS {
+public class GasConversionRecipeJS extends MekanismRecipeJS {
 	@Override
 	public void create(ListJS args) {
 		throw new RecipeExceptionJS("Creation not supported yet!");
