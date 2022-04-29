@@ -1,2 +1,4 @@
-@dev.latvian.kubejs.NonnullByDefault
+@NonnullByDefault
 package dev.latvian.kubejs.mekanism;
+
+import dev.latvian.mods.kubejs.NonnullByDefault;

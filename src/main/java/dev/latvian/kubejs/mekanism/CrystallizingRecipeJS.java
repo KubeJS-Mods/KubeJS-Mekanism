@@ -1,7 +1,7 @@
 package dev.latvian.kubejs.mekanism;
 
-import dev.latvian.kubejs.recipe.RecipeExceptionJS;
-import dev.latvian.kubejs.util.ListJS;
+import dev.latvian.mods.kubejs.recipe.RecipeExceptionJS;
+import dev.latvian.mods.kubejs.util.ListJS;
 
 /**
  * @author LatvianModder

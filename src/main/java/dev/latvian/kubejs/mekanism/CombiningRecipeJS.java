@@ -1,6 +1,6 @@
 package dev.latvian.kubejs.mekanism;
 
-import dev.latvian.kubejs.util.ListJS;
+import dev.latvian.mods.kubejs.util.ListJS;
 
 /**
  * @author LatvianModder
