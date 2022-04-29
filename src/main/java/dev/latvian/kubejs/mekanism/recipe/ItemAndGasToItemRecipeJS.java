@@ -27,14 +27,14 @@ public class ItemAndGasToItemRecipeJS extends MekanismRecipeJS {
 	public void deserialize() {
 		outputItems.add(parseResultItem(json.get("output")));
 		inputItems.add(parseIngredientItem(json.get("itemInput")).asIngredientStack());
-		inputGas = parseGasIngredient(json.get("gasInput"));
+		inputGas = parseGasIngredient(json.get("chemicalInput"));
 	}
 
 	@Override
 	public void serialize() {
 		if (serializeInputs) {
 			json.add("itemInput", inputItems.get(0).toJson());
-			json.add("gasInput", inputGas.serialize());
+			json.add("chemicalInput", inputGas.serialize());
 		}
 
 		if (serializeOutputs) {

@@ -1,5 +1,9 @@
 package dev.latvian.kubejs.mekanism;
 
+import dev.latvian.kubejs.mekanism.custom.KubeJSGasBuilder;
+import dev.latvian.kubejs.mekanism.custom.KubeJSInfuseTypeBuilder;
+import dev.latvian.kubejs.mekanism.custom.KubeJSPigmentBuilder;
+import dev.latvian.kubejs.mekanism.custom.KubeJSSlurryBuilder;
 import dev.latvian.kubejs.mekanism.recipe.ChemicalDissolutionRecipeJS;
 import dev.latvian.kubejs.mekanism.recipe.ChemicalInfusingRecipeJS;
 import dev.latvian.kubejs.mekanism.recipe.CombiningRecipeJS;
@@ -13,10 +17,34 @@ import dev.latvian.kubejs.mekanism.recipe.OxidizingRecipeJS;
 import dev.latvian.kubejs.mekanism.recipe.PressurizedReactionRecipeJS;
 import dev.latvian.kubejs.mekanism.recipe.SawingRecipeJS;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
+import dev.latvian.mods.kubejs.RegistryObjectBuilderTypes;
 import dev.latvian.mods.kubejs.recipe.RegisterRecipeHandlersEvent;
+import dev.latvian.mods.kubejs.util.UtilsJS;
+import mekanism.api.MekanismAPI;
+import mekanism.api.chemical.gas.Gas;
+import mekanism.api.chemical.infuse.InfuseType;
+import mekanism.api.chemical.pigment.Pigment;
+import mekanism.api.chemical.slurry.Slurry;
 import net.minecraft.resources.ResourceLocation;
 
 public class MekanismKubeJSPlugin extends KubeJSPlugin {
+
+	// registry builders for all mekanism chemical subtypes
+	public static final RegistryObjectBuilderTypes<Gas> GAS = RegistryObjectBuilderTypes.add(UtilsJS.cast(MekanismAPI.gasRegistryName()), Gas.class);
+	public static final RegistryObjectBuilderTypes<InfuseType> INFUSE_TYPE = RegistryObjectBuilderTypes.add(UtilsJS.cast(MekanismAPI.infuseTypeRegistryName()), Slurry.class);
+	public static final RegistryObjectBuilderTypes<Pigment> PIGMENT = RegistryObjectBuilderTypes.add(UtilsJS.cast(MekanismAPI.pigmentRegistryName()), Pigment.class);
+	public static final RegistryObjectBuilderTypes<Slurry> SLURRY = RegistryObjectBuilderTypes.add(UtilsJS.cast(MekanismAPI.slurryRegistryName()), Slurry.class);
+
+	@Override
+	public void init() {
+		GAS.addType("basic", KubeJSGasBuilder.class, KubeJSGasBuilder::new);
+		INFUSE_TYPE.addType("basic", KubeJSInfuseTypeBuilder.class, KubeJSInfuseTypeBuilder::new);
+		PIGMENT.addType("basic", KubeJSPigmentBuilder.class, KubeJSPigmentBuilder::new);
+		SLURRY.addType("basic", KubeJSSlurryBuilder.Basic.class, KubeJSSlurryBuilder.Basic::new);
+		SLURRY.addType("dirty", KubeJSSlurryBuilder.Dirty.class, KubeJSSlurryBuilder.Dirty::new);
+		SLURRY.addType("clean", KubeJSSlurryBuilder.Clean.class, KubeJSSlurryBuilder.Clean::new);
+	}
+
 	@Override
 	public void addRecipes(RegisterRecipeHandlersEvent event) {
 		event.register(new ResourceLocation("mekanism", "crushing"), ItemToItemRecipeJS::new);

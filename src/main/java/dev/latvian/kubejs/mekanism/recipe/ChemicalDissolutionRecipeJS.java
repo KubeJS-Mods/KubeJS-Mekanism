@@ -10,12 +10,12 @@ public class ChemicalDissolutionRecipeJS extends MekanismRecipeJS {
 	@Override
 	public void create(ListJS args) {
 		json.add("output", parseChemicalStack(args.get(0)));
-		json.add("gasInput", parseGasIngredient(args.get(1)).serialize());
+		json.add("chemicalInput", parseGasIngredient(args.get(1)).serialize());
 		inputItems.add(parseIngredientItem(args.get(2)).asIngredientStack());
 	}
 
 	public ChemicalDissolutionRecipeJS inputGas(Object o) {
-		json.add("gasInput", parseGasIngredient(o).serialize());
+		json.add("chemicalInput", parseGasIngredient(o).serialize());
 		serializeInputs = true;
 		save();
 		return this;

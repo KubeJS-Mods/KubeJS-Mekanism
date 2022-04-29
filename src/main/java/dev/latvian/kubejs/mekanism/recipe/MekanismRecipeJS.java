@@ -50,8 +50,8 @@ public abstract class MekanismRecipeJS extends RecipeJS {
 	}
 
 	public static GasStack parseGasResult(@Nullable Object o) {
-		if (o instanceof JsonObject) {
-			return SerializerHelper.deserializeGas((JsonObject) o);
+		if (o instanceof JsonObject json) {
+			return SerializerHelper.deserializeGas(json);
 		} else if (o instanceof CharSequence) {
 			JsonObject json = new JsonObject();
 			json.addProperty("gas", o.toString());
@@ -59,7 +59,7 @@ public abstract class MekanismRecipeJS extends RecipeJS {
 			return SerializerHelper.deserializeGas(json);
 		}
 
-		JsonObject json = MapJS.json(o);
+		JsonObject json = MapJS.of(o).toJson();
 
 		if (!json.has("amount")) {
 			json.addProperty("amount", 1000);
