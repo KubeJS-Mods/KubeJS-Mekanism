@@ -1,7 +1,7 @@
 package dev.latvian.kubejs.mekanism;
 
 import com.google.gson.JsonObject;
-import dev.latvian.kubejs.util.ListJS;
+import dev.latvian.mods.kubejs.util.ListJS;
 
 /**
  * @author LatvianModder

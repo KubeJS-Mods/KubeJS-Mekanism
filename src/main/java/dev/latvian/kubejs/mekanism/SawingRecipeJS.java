@@ -1,7 +1,7 @@
 package dev.latvian.kubejs.mekanism;
 
-import dev.latvian.kubejs.item.ItemStackJS;
-import dev.latvian.kubejs.util.ListJS;
+import dev.latvian.mods.kubejs.item.ItemStackJS;
+import dev.latvian.mods.kubejs.util.ListJS;
 
 /**
  * @author LatvianModder

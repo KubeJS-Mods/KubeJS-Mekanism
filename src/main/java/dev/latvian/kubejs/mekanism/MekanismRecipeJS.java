@@ -2,14 +2,15 @@ package dev.latvian.kubejs.mekanism;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.kubejs.item.ingredient.IngredientStackJS;
-import dev.latvian.kubejs.recipe.RecipeJS;
-import dev.latvian.kubejs.util.MapJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientStackJS;
+import dev.latvian.mods.kubejs.recipe.RecipeJS;
+import dev.latvian.mods.kubejs.util.MapJS;
 import mekanism.api.SerializerHelper;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.chemical.merged.BoxedChemicalStack;
-import mekanism.api.recipes.inputs.chemical.GasStackIngredient;
+import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
+import mekanism.common.recipe.ingredient.chemical.ChemicalIngredientDeserializer;
 
 import javax.annotation.Nullable;
 
@@ -29,14 +30,14 @@ public abstract class MekanismRecipeJS extends RecipeJS {
 		return json;
 	}
 
-	public static GasStackIngredient parseGasIngrdient(@Nullable Object o) {
+	public static ChemicalStackIngredient.GasStackIngredient parseGasIngrdient(@Nullable Object o) {
 		if (o instanceof JsonElement) {
-			return GasStackIngredient.deserialize((JsonElement) o);
+			return ChemicalIngredientDeserializer.GAS.deserialize((JsonElement) o);
 		} else if (o instanceof CharSequence) {
 			JsonObject json = new JsonObject();
 			json.addProperty("gas", o.toString());
 			json.addProperty("amount", 1000);
-			return GasStackIngredient.deserialize(json);
+			return ChemicalIngredientDeserializer.GAS.deserialize(json);
 		}
 
 		JsonObject json = MapJS.of(o).toJson();
@@ -45,7 +46,7 @@ public abstract class MekanismRecipeJS extends RecipeJS {
 			json.addProperty("amount", 1000);
 		}
 
-		return GasStackIngredient.deserialize(json);
+		return ChemicalIngredientDeserializer.GAS.deserialize(json);
 	}
 
 	public static GasStack parseGasResult(@Nullable Object o) {

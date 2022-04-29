@@ -1,8 +1,8 @@
 package dev.latvian.kubejs.mekanism;
 
 import com.google.gson.JsonArray;
-import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.kubejs.util.ListJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.util.ListJS;
 
 /**
  * @author LatvianModder

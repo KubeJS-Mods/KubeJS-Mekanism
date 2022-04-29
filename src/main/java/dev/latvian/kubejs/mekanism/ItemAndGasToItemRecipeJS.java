@@ -1,13 +1,13 @@
 package dev.latvian.kubejs.mekanism;
 
-import dev.latvian.kubejs.util.ListJS;
-import mekanism.api.recipes.inputs.chemical.GasStackIngredient;
+import dev.latvian.mods.kubejs.util.ListJS;
+import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
 
 /**
  * @author LatvianModder
  */
 public class ItemAndGasToItemRecipeJS extends MekanismRecipeJS {
-	public GasStackIngredient inputGas;
+	public ChemicalStackIngredient.GasStackIngredient inputGas;
 
 	@Override
 	public void create(ListJS args) {
