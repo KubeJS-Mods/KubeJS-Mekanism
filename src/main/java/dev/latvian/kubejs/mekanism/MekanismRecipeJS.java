@@ -10,7 +10,7 @@ import mekanism.api.SerializerHelper;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.chemical.merged.BoxedChemicalStack;
 import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
-import mekanism.common.recipe.ingredient.chemical.ChemicalIngredientDeserializer;
+import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess;
 
 import javax.annotation.Nullable;
 
@@ -32,12 +32,12 @@ public abstract class MekanismRecipeJS extends RecipeJS {
 
 	public static ChemicalStackIngredient.GasStackIngredient parseGasIngrdient(@Nullable Object o) {
 		if (o instanceof JsonElement) {
-			return ChemicalIngredientDeserializer.GAS.deserialize((JsonElement) o);
+			return IngredientCreatorAccess.gas().deserialize((JsonElement) o);
 		} else if (o instanceof CharSequence) {
 			JsonObject json = new JsonObject();
 			json.addProperty("gas", o.toString());
 			json.addProperty("amount", 1000);
-			return ChemicalIngredientDeserializer.GAS.deserialize(json);
+			return IngredientCreatorAccess.gas().deserialize(json);
 		}
 
 		JsonObject json = MapJS.of(o).toJson();
@@ -46,7 +46,7 @@ public abstract class MekanismRecipeJS extends RecipeJS {
 			json.addProperty("amount", 1000);
 		}
 
-		return ChemicalIngredientDeserializer.GAS.deserialize(json);
+		return IngredientCreatorAccess.gas().deserialize(json);
 	}
 
 	public static GasStack parseGasResult(@Nullable Object o) {

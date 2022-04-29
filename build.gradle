@@ -53,7 +53,7 @@ dependencies {
 
     modImplementation "mezz.jei:jei-1.18.2:${jei_version}"
     modImplementation "dev.latvian.mods:kubejs-forge:${project.kubejs_version}"
-    modImplementation "mekanism:Mekanism:${project.mekanism_version}"
+    modImplementation "mekanism:Mekanism:${project.mekanism_version}:api"
 }
 
 processResources {
