@@ -133,7 +133,7 @@ if (ENV.CURSEFORGE_KEY) {
             addGameVersion "1.18.2"
             mainArtifact(remapJar.archivePath)
             relations {
-                requiredDependency 'kubejs-forge'
+                requiredDependency 'kubejs'
                 requiredDependency 'mekanism'
             }
             changelog = getGitChangelog
