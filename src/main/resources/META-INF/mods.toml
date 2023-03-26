@@ -16,13 +16,13 @@ license = "GNU LGPLv3"
 [[dependencies.kubejs_mekanism]]
 modId = "kubejs"
 mandatory = true
-versionRange = "[1802.5.2-build.407,)"
+versionRange = "[1902.6.0-build.142,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.kubejs_mekanism]]
 modId = "mekanism"
 mandatory = true
-versionRange = "[10.2.0,)"
+versionRange = "[10.3.8,)"
 ordering = "AFTER"
 side = "BOTH"

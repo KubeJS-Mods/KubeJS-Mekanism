@@ -10,7 +10,7 @@ import dev.latvian.kubejs.mekanism.recipe.CombiningRecipeJS;
 import dev.latvian.kubejs.mekanism.recipe.CrystallizingRecipeJS;
 import dev.latvian.kubejs.mekanism.recipe.EnergyConversionRecipeJS;
 import dev.latvian.kubejs.mekanism.recipe.GasConversionRecipeJS;
-import dev.latvian.kubejs.mekanism.recipe.ItemAndGasToItemRecipeJS;
+import dev.latvian.kubejs.mekanism.recipe.ItemAndChemicalToItemRecipeJS;
 import dev.latvian.kubejs.mekanism.recipe.ItemToItemRecipeJS;
 import dev.latvian.kubejs.mekanism.recipe.MetallurgicInfusingRecipeJS;
 import dev.latvian.kubejs.mekanism.recipe.OxidizingRecipeJS;
@@ -18,7 +18,7 @@ import dev.latvian.kubejs.mekanism.recipe.PressurizedReactionRecipeJS;
 import dev.latvian.kubejs.mekanism.recipe.SawingRecipeJS;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.RegistryObjectBuilderTypes;
-import dev.latvian.mods.kubejs.recipe.RegisterRecipeHandlersEvent;
+import dev.latvian.mods.kubejs.recipe.RegisterRecipeTypesEvent;
 import dev.latvian.mods.kubejs.util.UtilsJS;
 import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.gas.Gas;
@@ -28,6 +28,9 @@ import mekanism.api.chemical.slurry.Slurry;
 import net.minecraft.resources.ResourceLocation;
 
 public class MekanismKubeJSPlugin extends KubeJSPlugin {
+	public static ResourceLocation mekId(String path) {
+		return new ResourceLocation(MekanismAPI.MEKANISM_MODID, path);
+	}
 
 	// registry builders for all mekanism chemical subtypes
 	public static final RegistryObjectBuilderTypes<Gas> GAS = RegistryObjectBuilderTypes.add(UtilsJS.cast(MekanismAPI.gasRegistryName()), Gas.class);
@@ -46,30 +49,30 @@ public class MekanismKubeJSPlugin extends KubeJSPlugin {
 	}
 
 	@Override
-	public void addRecipes(RegisterRecipeHandlersEvent event) {
-		event.register(new ResourceLocation("mekanism", "crushing"), ItemToItemRecipeJS::new);
-		event.register(new ResourceLocation("mekanism", "enriching"), ItemToItemRecipeJS::new);
-		event.register(new ResourceLocation("mekanism", "smelting"), ItemToItemRecipeJS::new);
-		event.register(new ResourceLocation("mekanism", "chemical_infusing"), ChemicalInfusingRecipeJS::new);
-		event.register(new ResourceLocation("mekanism", "combining"), CombiningRecipeJS::new);
+	public void registerRecipeTypes(RegisterRecipeTypesEvent event) {
+		event.register(mekId("crushing"), ItemToItemRecipeJS::new);
+		event.register(mekId("enriching"), ItemToItemRecipeJS::new);
+		event.register(mekId("smelting"), ItemToItemRecipeJS::new);
+		event.register(mekId("chemical_infusing"), ChemicalInfusingRecipeJS::new);
+		event.register(mekId("combining"), CombiningRecipeJS::new);
 		// separating = new ElectrolysisRecipeSerializer(ElectrolysisIRecipe::new);
 		// washing = new FluidSlurryToSlurryRecipeSerializer(FluidSlurryToSlurryIRecipe::new);
 		// evaporating = new FluidToFluidRecipeSerializer(FluidToFluidIRecipe::new);
 		// activating = new GasToGasRecipeSerializer(ActivatingIRecipe::new);
 		// centrifuging = new GasToGasRecipeSerializer(CentrifugingIRecipe::new);
-		event.register(new ResourceLocation("mekanism", "crystallizing"), CrystallizingRecipeJS::new);
-		event.register(new ResourceLocation("mekanism", "dissolution"), ChemicalDissolutionRecipeJS::new);
-		event.register(new ResourceLocation("mekanism", "compressing"), ItemAndGasToItemRecipeJS::new);
-		event.register(new ResourceLocation("mekanism", "purifying"), ItemAndGasToItemRecipeJS::new);
-		event.register(new ResourceLocation("mekanism", "injecting"), ItemAndGasToItemRecipeJS::new);
+		event.register(mekId("crystallizing"), CrystallizingRecipeJS::new);
+		event.register(mekId("dissolution"), ChemicalDissolutionRecipeJS::new);
+		event.register(mekId("compressing"), ItemAndChemicalToItemRecipeJS::new);
+		event.register(mekId("purifying"), ItemAndChemicalToItemRecipeJS::new);
+		event.register(mekId("injecting"), ItemAndChemicalToItemRecipeJS::new);
 		// nucleosynthesizing = new NucleosynthesizingRecipeSerializer(NucleosynthesizingIRecipe::new);
-		event.register(new ResourceLocation("mekanism", "energy_conversion"), EnergyConversionRecipeJS::new);
-		event.register(new ResourceLocation("mekanism", "gas_conversion"), GasConversionRecipeJS::new);
-		event.register(new ResourceLocation("mekanism", "oxidizing"), OxidizingRecipeJS::new);
+		event.register(mekId("energy_conversion"), EnergyConversionRecipeJS::new);
+		event.register(mekId("gas_conversion"), GasConversionRecipeJS::new);
+		event.register(mekId("oxidizing"), OxidizingRecipeJS::new);
 		// infusion_conversion = new ItemStackToInfuseTypeRecipeSerializer(InfusionConversionIRecipe::new);
-		event.register(new ResourceLocation("mekanism", "metallurgic_infusing"), MetallurgicInfusingRecipeJS::new);
-		event.register(new ResourceLocation("mekanism", "reaction"), PressurizedReactionRecipeJS::new);
+		event.register(mekId("metallurgic_infusing"), MetallurgicInfusingRecipeJS::new);
+		event.register(mekId("reaction"), PressurizedReactionRecipeJS::new);
 		// rotary = new RotaryRecipeSerializer(new RotaryIRecipe.Factory());
-		event.register(new ResourceLocation("mekanism", "sawing"), SawingRecipeJS::new);
+		event.register(mekId("sawing"), SawingRecipeJS::new);
 	}
 }

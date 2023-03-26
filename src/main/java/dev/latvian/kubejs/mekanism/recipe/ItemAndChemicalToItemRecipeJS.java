@@ -4,8 +4,8 @@ import dev.latvian.mods.kubejs.recipe.IngredientMatch;
 import dev.latvian.mods.kubejs.recipe.ItemInputTransformer;
 import dev.latvian.mods.kubejs.recipe.ItemOutputTransformer;
 import dev.latvian.mods.kubejs.recipe.RecipeArguments;
-import dev.latvian.mods.kubejs.recipe.RecipeExceptionJS;
 import mekanism.api.JsonConstants;
+import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -13,34 +13,41 @@ import net.minecraft.world.item.crafting.Ingredient;
 /**
  * @author LatvianModder
  */
-public class PressurizedReactionRecipeJS extends MekanismRecipeJS {
-	public ItemStack itemOutput = ItemStack.EMPTY;
+public class ItemAndChemicalToItemRecipeJS extends MekanismRecipeJS {
+	public ItemStack output;
 	public ItemStackIngredient itemInput;
+	public ChemicalStackIngredient<?, ?> chemicalInput;
 
 	@Override
 	public void create(RecipeArguments args) {
-		throw new RecipeExceptionJS("Creation not supported yet!");
+		output = parseItemOutput(args.get(0));
+		itemInput = mekStackIngredient(args.get(1));
+		chemicalInput = parseChemicalIngredient(args.get(2));
+	}
+
+	public ItemAndChemicalToItemRecipeJS chemicalInput(Object o) {
+		chemicalInput = parseChemicalIngredient(o);
+		serializeInputs = true;
+		save();
+		return this;
 	}
 
 	@Override
 	public void deserialize() {
-		if (json.has(JsonConstants.ITEM_OUTPUT)) {
-			itemOutput = parseItemOutput(json.get(JsonConstants.ITEM_OUTPUT));
-		}
-
+		output = parseItemOutput(json.get(JsonConstants.OUTPUT));
 		itemInput = mekStackIngredient(json.get(JsonConstants.ITEM_INPUT));
+		chemicalInput = parseChemicalIngredient(json.get(JsonConstants.CHEMICAL_INPUT));
 	}
 
 	@Override
 	public void serialize() {
 		if (serializeInputs) {
 			json.add(JsonConstants.ITEM_INPUT, itemInput.serialize());
+			json.add(JsonConstants.CHEMICAL_INPUT, chemicalInput.serialize());
 		}
 
 		if (serializeOutputs) {
-			if (itemOutput != ItemStack.EMPTY) {
-				json.add(JsonConstants.ITEM_OUTPUT, itemToJson(itemOutput));
-			}
+			json.add(JsonConstants.OUTPUT, itemToJson(output));
 		}
 	}
 
@@ -63,13 +70,13 @@ public class PressurizedReactionRecipeJS extends MekanismRecipeJS {
 
 	@Override
 	public boolean hasOutput(IngredientMatch match) {
-		return match.contains(itemOutput);
+		return match.contains(output);
 	}
 
 	@Override
 	public boolean replaceOutput(IngredientMatch match, ItemStack with, ItemOutputTransformer transformer) {
-		if (match.contains(itemOutput)) {
-			itemOutput = transformer.transform(this, match, itemOutput, with);
+		if (match.contains(output)) {
+			output = transformer.transform(this, match, output, with);
 			return true;
 		}
 

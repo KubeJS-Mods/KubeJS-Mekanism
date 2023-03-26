@@ -1,8 +1,13 @@
 package dev.latvian.kubejs.mekanism.recipe;
 
-import dev.latvian.mods.kubejs.util.ListJS;
+import dev.latvian.mods.kubejs.recipe.IngredientMatch;
+import dev.latvian.mods.kubejs.recipe.ItemInputTransformer;
+import dev.latvian.mods.kubejs.recipe.ItemOutputTransformer;
+import dev.latvian.mods.kubejs.recipe.RecipeArguments;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 
 /**
  * @author LatvianModder
@@ -13,7 +18,7 @@ public class ChemicalInfusingRecipeJS extends MekanismRecipeJS {
 	public ChemicalStackIngredient.GasStackIngredient rightGasInput;
 
 	@Override
-	public void create(ListJS args) {
+	public void create(RecipeArguments args) {
 		gasOutput = parseGasResult(args.get(0));
 		leftGasInput = parseGasIngredient(args.get(1));
 		rightGasInput = parseGasIngredient(args.get(2));
@@ -57,5 +62,25 @@ public class ChemicalInfusingRecipeJS extends MekanismRecipeJS {
 			json.add("leftInput", leftGasInput.serialize());
 			json.add("rightInput", rightGasInput.serialize());
 		}
+	}
+
+	@Override
+	public boolean hasInput(IngredientMatch match) {
+		return false;
+	}
+
+	@Override
+	public boolean replaceInput(IngredientMatch match, Ingredient with, ItemInputTransformer transformer) {
+		return false;
+	}
+
+	@Override
+	public boolean hasOutput(IngredientMatch match) {
+		return false;
+	}
+
+	@Override
+	public boolean replaceOutput(IngredientMatch match, ItemStack with, ItemOutputTransformer transformer) {
+		return false;
 	}
 }

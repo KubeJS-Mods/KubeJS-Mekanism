@@ -1,41 +1,77 @@
 package dev.latvian.kubejs.mekanism.recipe;
 
 
-import dev.latvian.mods.kubejs.util.ListJS;
+import dev.latvian.mods.kubejs.recipe.IngredientMatch;
+import dev.latvian.mods.kubejs.recipe.ItemInputTransformer;
+import dev.latvian.mods.kubejs.recipe.ItemOutputTransformer;
+import dev.latvian.mods.kubejs.recipe.RecipeArguments;
+import mekanism.api.JsonConstants;
+import mekanism.api.recipes.ingredients.ItemStackIngredient;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 
 /**
  * @author LatvianModder
  */
 public class ChemicalDissolutionRecipeJS extends MekanismRecipeJS {
+	public ItemStackIngredient itemInput;
+
 	@Override
-	public void create(ListJS args) {
-		json.add("output", parseChemicalStack(args.get(0)));
-		json.add("chemicalInput", parseGasIngredient(args.get(1)).serialize());
-		inputItems.add(parseIngredientItem(args.get(2)).asIngredientStack());
+	public void create(RecipeArguments args) {
+		json.add(JsonConstants.OUTPUT, parseChemicalStack(args.get(0)));
+		json.add(JsonConstants.CHEMICAL_INPUT, parseGasIngredient(args.get(1)).serialize());
+		itemInput = mekStackIngredient(args.get(2));
 	}
 
-	public ChemicalDissolutionRecipeJS inputGas(Object o) {
-		json.add("chemicalInput", parseGasIngredient(o).serialize());
+	public ChemicalDissolutionRecipeJS chemicalInput(Object o) {
+		json.add(JsonConstants.CHEMICAL_INPUT, parseGasIngredient(o).serialize());
 		serializeInputs = true;
 		save();
 		return this;
 	}
 
-	public ChemicalDissolutionRecipeJS outputChemical(Object o) {
-		json.add("output", parseChemicalStack(o));
+	public ChemicalDissolutionRecipeJS chemicalOutput(Object o) {
+		json.add(JsonConstants.OUTPUT, parseChemicalStack(o));
 		save();
 		return this;
 	}
 
 	@Override
 	public void deserialize() {
-		inputItems.add(parseIngredientItem(json.get("itemInput")).asIngredientStack());
+		itemInput = mekStackIngredient(json.get(JsonConstants.ITEM_INPUT));
 	}
 
 	@Override
 	public void serialize() {
 		if (serializeInputs) {
-			json.add("itemInput", inputItems.get(0).toJson());
+			json.add(JsonConstants.ITEM_INPUT, itemInput.serialize());
 		}
+	}
+
+	@Override
+	public boolean hasInput(IngredientMatch match) {
+		return mekMatchStackIngredient(itemInput, match);
+	}
+
+	@Override
+	public boolean replaceInput(IngredientMatch match, Ingredient with, ItemInputTransformer transformer) {
+		var newIn = mekReplaceStackIngredient(itemInput, match, with, transformer);
+
+		if (itemInput != newIn) {
+			itemInput = newIn;
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean hasOutput(IngredientMatch match) {
+		return false;
+	}
+
+	@Override
+	public boolean replaceOutput(IngredientMatch match, ItemStack with, ItemOutputTransformer transformer) {
+		return false;
 	}
 }
