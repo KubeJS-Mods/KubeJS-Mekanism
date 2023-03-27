@@ -13,20 +13,20 @@ import net.minecraft.world.item.crafting.Ingredient;
 /**
  * @author LatvianModder
  */
-public class ItemAndChemicalToItemRecipeJS extends MekanismRecipeJS {
+public class ItemAndGasToItemRecipeJS extends MekanismRecipeJS {
 	public ItemStack output;
 	public ItemStackIngredient itemInput;
-	public ChemicalStackIngredient<?, ?> chemicalInput;
+	public ChemicalStackIngredient<?, ?> gasInput;
 
 	@Override
 	public void create(RecipeArguments args) {
 		output = parseItemOutput(args.get(0));
 		itemInput = mekStackIngredient(args.get(1));
-		chemicalInput = parseChemicalIngredient(args.get(2));
+		gasInput = parseGasIngredient(args.get(2));
 	}
 
-	public ItemAndChemicalToItemRecipeJS chemicalInput(Object o) {
-		chemicalInput = parseChemicalIngredient(o);
+	public ItemAndGasToItemRecipeJS gasInput(Object o) {
+		gasInput = parseGasIngredient(o);
 		serializeInputs = true;
 		save();
 		return this;
@@ -36,14 +36,14 @@ public class ItemAndChemicalToItemRecipeJS extends MekanismRecipeJS {
 	public void deserialize() {
 		output = parseItemOutput(json.get(JsonConstants.OUTPUT));
 		itemInput = mekStackIngredient(json.get(JsonConstants.ITEM_INPUT));
-		chemicalInput = parseChemicalIngredient(json.get(JsonConstants.CHEMICAL_INPUT));
+		gasInput = parseGasIngredient(json.get(JsonConstants.CHEMICAL_INPUT));
 	}
 
 	@Override
 	public void serialize() {
 		if (serializeInputs) {
 			json.add(JsonConstants.ITEM_INPUT, itemInput.serialize());
-			json.add(JsonConstants.CHEMICAL_INPUT, chemicalInput.serialize());
+			json.add(JsonConstants.CHEMICAL_INPUT, gasInput.serialize());
 		}
 
 		if (serializeOutputs) {
