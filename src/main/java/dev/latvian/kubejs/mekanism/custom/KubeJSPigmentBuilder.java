@@ -1,7 +1,7 @@
 package dev.latvian.kubejs.mekanism.custom;
 
 import dev.latvian.kubejs.mekanism.MekanismKubeJSPlugin;
-import dev.latvian.mods.kubejs.RegistryObjectBuilderTypes;
+import dev.latvian.mods.kubejs.registry.RegistryInfo;
 import mekanism.api.chemical.pigment.Pigment;
 import mekanism.api.chemical.pigment.PigmentBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -35,13 +35,13 @@ public class KubeJSPigmentBuilder extends KubeJSChemicalBuilder<Pigment, Pigment
 	}
 
 	@Override
-	public RegistryObjectBuilderTypes<Pigment> getRegistryType() {
+	public RegistryInfo getRegistryType() {
 		return MekanismKubeJSPlugin.PIGMENT;
 	}
 
 	@Override
 	public Pigment createObject() {
-		if(barColor == null) {
+		if (barColor == null) {
 			return new Pigment(builder());
 		} else {
 			int color = barColor;

@@ -1,7 +1,7 @@
 package dev.latvian.kubejs.mekanism.custom;
 
 import dev.latvian.kubejs.mekanism.MekanismKubeJSPlugin;
-import dev.latvian.mods.kubejs.RegistryObjectBuilderTypes;
+import dev.latvian.mods.kubejs.registry.RegistryInfo;
 import dev.latvian.mods.kubejs.util.Tags;
 import mekanism.api.chemical.slurry.Slurry;
 import mekanism.api.chemical.slurry.SlurryBuilder;
@@ -33,7 +33,7 @@ public sealed abstract class KubeJSSlurryBuilder extends KubeJSChemicalBuilder<S
 	}
 
 	@Override
-	public RegistryObjectBuilderTypes<Slurry> getRegistryType() {
+	public RegistryInfo getRegistryType() {
 		return MekanismKubeJSPlugin.SLURRY;
 	}
 

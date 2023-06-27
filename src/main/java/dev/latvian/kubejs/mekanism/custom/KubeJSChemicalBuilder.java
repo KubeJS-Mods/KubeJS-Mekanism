@@ -1,6 +1,6 @@
 package dev.latvian.kubejs.mekanism.custom;
 
-import dev.latvian.mods.kubejs.BuilderBase;
+import dev.latvian.mods.kubejs.registry.BuilderBase;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalBuilder;
 import mekanism.api.chemical.attribute.ChemicalAttribute;

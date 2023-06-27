@@ -2,7 +2,7 @@ package dev.latvian.kubejs.mekanism.custom;
 
 import dev.latvian.kubejs.mekanism.MekanismKubeJSPlugin;
 import dev.latvian.kubejs.mekanism.util.CachingGasProvider;
-import dev.latvian.mods.kubejs.RegistryObjectBuilderTypes;
+import dev.latvian.mods.kubejs.registry.RegistryInfo;
 import mekanism.api.chemical.gas.Gas;
 import mekanism.api.chemical.gas.GasBuilder;
 import mekanism.api.chemical.gas.attribute.GasAttributes;
@@ -89,7 +89,7 @@ public class KubeJSGasBuilder extends KubeJSChemicalBuilder<Gas, GasBuilder, Kub
 	}
 
 	@Override
-	public RegistryObjectBuilderTypes<Gas> getRegistryType() {
+	public RegistryInfo getRegistryType() {
 		return MekanismKubeJSPlugin.GAS;
 	}
 

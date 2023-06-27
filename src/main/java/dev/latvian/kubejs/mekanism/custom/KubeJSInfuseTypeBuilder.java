@@ -1,7 +1,7 @@
 package dev.latvian.kubejs.mekanism.custom;
 
 import dev.latvian.kubejs.mekanism.MekanismKubeJSPlugin;
-import dev.latvian.mods.kubejs.RegistryObjectBuilderTypes;
+import dev.latvian.mods.kubejs.registry.RegistryInfo;
 import mekanism.api.chemical.infuse.InfuseType;
 import mekanism.api.chemical.infuse.InfuseTypeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -35,13 +35,13 @@ public class KubeJSInfuseTypeBuilder extends KubeJSChemicalBuilder<InfuseType, I
 	}
 
 	@Override
-	public RegistryObjectBuilderTypes<InfuseType> getRegistryType() {
+	public RegistryInfo getRegistryType() {
 		return MekanismKubeJSPlugin.INFUSE_TYPE;
 	}
 
 	@Override
 	public InfuseType createObject() {
-		if(barColor == null) {
+		if (barColor == null) {
 			return new InfuseType(builder());
 		} else {
 			int color = barColor;
