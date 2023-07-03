@@ -3,10 +3,17 @@ package dev.latvian.kubejs.mekanism.recipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import dev.latvian.mods.kubejs.item.InputItem;
 import dev.latvian.mods.kubejs.item.OutputItem;
+import dev.latvian.mods.kubejs.recipe.InputReplacement;
+import dev.latvian.mods.kubejs.recipe.ItemMatch;
+import dev.latvian.mods.kubejs.recipe.RecipeExceptionJS;
 import dev.latvian.mods.kubejs.recipe.RecipeJS;
 import dev.latvian.mods.kubejs.recipe.RecipeKey;
+import dev.latvian.mods.kubejs.recipe.ReplacementMatch;
 import dev.latvian.mods.kubejs.recipe.component.ComponentRole;
+import dev.latvian.mods.kubejs.recipe.component.EnumComponent;
 import dev.latvian.mods.kubejs.recipe.component.ItemComponents;
 import dev.latvian.mods.kubejs.recipe.component.RecipeComponent;
 import dev.latvian.mods.kubejs.recipe.component.RecipeComponentValue;
@@ -17,21 +24,109 @@ import mekanism.api.JsonConstants;
 import mekanism.api.SerializerHelper;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalStack;
+import mekanism.api.chemical.ChemicalType;
 import mekanism.api.chemical.gas.GasStack;
+import mekanism.api.math.FloatingLong;
 import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
+import mekanism.api.recipes.ingredients.ItemStackIngredient;
 import mekanism.api.recipes.ingredients.creator.IChemicalStackIngredientCreator;
 import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess;
+import mekanism.common.recipe.ingredient.creator.ItemStackIngredientCreator;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 public interface MekComponents {
+	RecipeComponent<ItemStackIngredient> INPUT_ITEM = new RecipeComponent<>() {
+		@Override
+		public Class<?> componentClass() {
+			return ItemStackIngredient.class;
+		}
+
+		@Override
+		public JsonElement write(RecipeJS recipe, ItemStackIngredient value) {
+			return value.serialize();
+		}
+
+		@Override
+		public ItemStackIngredient read(RecipeJS recipe, Object from) {
+			if (from instanceof ItemStackIngredient in) {
+				return in;
+			} else if (from instanceof JsonElement json) {
+				return IngredientCreatorAccess.item().deserialize(json);
+			}
+
+			var in = InputItem.of(from);
+			return ItemStackIngredientCreator.INSTANCE.from(in.ingredient, in.count);
+		}
+
+		@Override
+		public boolean isInput(RecipeJS recipe, ItemStackIngredient value, ReplacementMatch match) {
+			if (match instanceof ItemMatch m) {
+				if (value instanceof ItemStackIngredientCreator.SingleItemStackIngredient in) {
+					return m.contains(in.getInputRaw());
+				} else if (value instanceof ItemStackIngredientCreator.MultiItemStackIngredient in) {
+					for (var in1 : in.getIngredients()) {
+						if (m.contains(((ItemStackIngredientCreator.SingleItemStackIngredient) in1).getInputRaw())) {
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
+		@Override
+		public ItemStackIngredient replaceInput(RecipeJS recipe, ItemStackIngredient original, ReplacementMatch match, InputReplacement with) {
+			return original;
+		}
+	};
+
+	RecipeComponent<ChemicalType> CHEMICAL_TYPE = new EnumComponent<>(ChemicalType.class, ChemicalType::getSerializedName, (c, s) -> ChemicalType.fromString(s));
+
+	RecipeComponent<ChemicalStackIngredient<?, ?>> ANY_CHEMICAL_INPUT = new RecipeComponent<>() {
+		@Override
+		public Class<?> componentClass() {
+			return ChemicalStackIngredient.class;
+		}
+
+		@Override
+		public JsonElement write(RecipeJS recipe, ChemicalStackIngredient<?, ?> value) {
+			return value.serialize();
+		}
+
+		@Override
+		public ChemicalStackIngredient<?, ?> read(RecipeJS recipe, Object from) {
+			if (from instanceof ChemicalStackIngredient<?, ?> in) {
+				return in;
+			}
+
+			throw new RecipeExceptionJS("Cannot read chemical stack ingredient from " + from);
+		}
+
+		@Override
+		public ChemicalStackIngredient<?, ?> readFromJson(RecipeJS recipe, RecipeKey<ChemicalStackIngredient<?, ?>> key, JsonObject json) {
+			ChemicalType chemicalType = SerializerHelper.getChemicalType(json);
+			return IngredientCreatorAccess.getCreatorForType(chemicalType).deserialize(json.get(key.name));
+		}
+
+		@Override
+		public void writeToJson(RecipeComponentValue<ChemicalStackIngredient<?, ?>> value, JsonObject json) {
+			RecipeComponent.super.writeToJson(value, json);
+			json.addProperty(JsonConstants.CHEMICAL_TYPE, ChemicalType.getTypeFor(value.value).getSerializedName());
+		}
+	};
+
 	private static <C extends Chemical<C>, S extends ChemicalStack<C>, I extends ChemicalStackIngredient<C, S>> I parseChemicalIngredient(@Nullable Object o, String jsonKey, int defaultAmount, IChemicalStackIngredientCreator<C, S, I> creator) {
 		// TODO: make a proper wrapper
-		return creator.deserialize(wrapChemical(JsonUtils.of(o), jsonKey, defaultAmount));
+		return creator.deserialize(wrapChemical(o instanceof Map ? MapJS.json(o) : JsonUtils.of(o), jsonKey, defaultAmount));
 	}
 
-	private static JsonElement wrapChemical(JsonElement json, String jsonKey, int defaultAmount) {
-		if (json.isJsonPrimitive()) {
+	private static JsonElement wrapChemical(@Nullable JsonElement json, String jsonKey, int defaultAmount) {
+		if (json == null || json.isJsonNull()) {
+			return json;
+		} else if (json.isJsonPrimitive()) {
 			var string = json.getAsString().trim();
 			var amount = defaultAmount;
 
@@ -178,6 +273,33 @@ public interface MekComponents {
 			}
 
 			return item;
+		}
+	};
+
+	RecipeComponent<FloatingLong> FLOATING_LONG = new RecipeComponent<>() {
+		@Override
+		public Class<?> componentClass() {
+			return FloatingLong.class;
+		}
+
+		@Override
+		public JsonElement write(RecipeJS recipe, FloatingLong value) {
+			return new JsonPrimitive(value);
+		}
+
+		@Override
+		public FloatingLong read(RecipeJS recipe, Object from) {
+			if (from instanceof FloatingLong n) {
+				return n;
+			} else if (from instanceof Number n) {
+				return FloatingLong.createConst(n.doubleValue());
+			}
+
+			try {
+				return FloatingLong.parseFloatingLong(from instanceof JsonElement json ? json.getAsNumber().toString() : from.toString(), true);
+			} catch (Exception ex) {
+				throw new RecipeExceptionJS("Expected floating long to be a positive decimal number");
+			}
 		}
 	};
 }

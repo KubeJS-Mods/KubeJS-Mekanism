@@ -57,7 +57,7 @@ dependencies {
 	modLocalRuntime "mekanism:Mekanism:${project.mekanism_version}:generators" // generators
 	modLocalRuntime "mekanism:Mekanism:${project.mekanism_version}:tools" // tools
 
-	modImplementation "mezz.jei:jei-1.18.2:${jei_version}"
+	// modImplementation "mezz.jei:jei-1.19.2-forge:${jei_version}"
 }
 
 processResources {
