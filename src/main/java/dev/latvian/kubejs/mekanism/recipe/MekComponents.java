@@ -39,6 +39,11 @@ import java.util.Map;
 public interface MekComponents {
 	RecipeComponent<ItemStackIngredient> INPUT_ITEM = new RecipeComponent<>() {
 		@Override
+		public ComponentRole role() {
+			return ComponentRole.INPUT;
+		}
+
+		@Override
 		public Class<?> componentClass() {
 			return ItemStackIngredient.class;
 		}
@@ -79,6 +84,38 @@ public interface MekComponents {
 
 		@Override
 		public ItemStackIngredient replaceInput(RecipeJS recipe, ItemStackIngredient original, ReplacementMatch match, InputReplacement with) {
+			if (match instanceof ItemMatch m) {
+				if (original instanceof ItemStackIngredientCreator.SingleItemStackIngredient in) {
+					if (m.contains(in.getInputRaw())) {
+						var item = InputItem.of(with.replaceInput(recipe, match, InputItem.of(in.getInputRaw(), in.getAmountRaw())));
+						return ItemStackIngredientCreator.INSTANCE.from(item.ingredient, item.count);
+					}
+				} else if (original instanceof ItemStackIngredientCreator.MultiItemStackIngredient in) {
+					var ingredients = in.getIngredients();
+
+					for (var in1 : ingredients) {
+						if (m.contains(((ItemStackIngredientCreator.SingleItemStackIngredient) in1).getInputRaw())) {
+							var repl = new ItemStackIngredient[ingredients.size()];
+
+							for (int i = 0; i < repl.length; i++) {
+								var in2 = (ItemStackIngredientCreator.SingleItemStackIngredient) ingredients.get(i);
+
+								if (m.contains(in2.getInputRaw())) {
+									var item = InputItem.of(with.replaceInput(recipe, match, InputItem.of(in2.getInputRaw(), in2.getAmountRaw())));
+									repl[i] = ItemStackIngredientCreator.INSTANCE.from(item.ingredient, item.count);
+								} else {
+									repl[i] = in2;
+								}
+							}
+
+							return ItemStackIngredientCreator.INSTANCE.createMulti(repl);
+						}
+					}
+				}
+
+				return original;
+			}
+
 			return original;
 		}
 	};
@@ -86,6 +123,11 @@ public interface MekComponents {
 	RecipeComponent<ChemicalType> CHEMICAL_TYPE = new EnumComponent<>(ChemicalType.class, ChemicalType::getSerializedName, (c, s) -> ChemicalType.fromString(s));
 
 	RecipeComponent<ChemicalStackIngredient<?, ?>> ANY_CHEMICAL_INPUT = new RecipeComponent<>() {
+		@Override
+		public ComponentRole role() {
+			return ComponentRole.INPUT;
+		}
+
 		@Override
 		public Class<?> componentClass() {
 			return ChemicalStackIngredient.class;
@@ -216,6 +258,11 @@ public interface MekComponents {
 	};
 
 	RecipeComponent<GasStack> GAS_OUTPUT = new RecipeComponent<>() {
+		@Override
+		public ComponentRole role() {
+			return ComponentRole.OUTPUT;
+		}
+
 		@Override
 		public Class<?> componentClass() {
 			return GasStack.class;
