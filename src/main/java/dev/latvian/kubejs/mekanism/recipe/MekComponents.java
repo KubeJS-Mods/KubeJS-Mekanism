@@ -1,9 +1,9 @@
 package dev.latvian.kubejs.mekanism.recipe;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import dev.latvian.kubejs.mekanism.util.ChemicalWrapper;
 import dev.latvian.mods.kubejs.item.InputItem;
 import dev.latvian.mods.kubejs.item.OutputItem;
 import dev.latvian.mods.kubejs.recipe.InputReplacement;
@@ -18,22 +18,22 @@ import dev.latvian.mods.kubejs.recipe.component.ItemComponents;
 import dev.latvian.mods.kubejs.recipe.component.RecipeComponent;
 import dev.latvian.mods.kubejs.recipe.component.RecipeComponentValue;
 import dev.latvian.mods.kubejs.recipe.component.RecipeComponentWithParent;
+import dev.latvian.mods.kubejs.typings.desc.DescriptionContext;
+import dev.latvian.mods.kubejs.typings.desc.TypeDescJS;
 import dev.latvian.mods.kubejs.util.MapJS;
-import dev.latvian.mods.rhino.mod.util.JsonUtils;
 import mekanism.api.JsonConstants;
 import mekanism.api.SerializerHelper;
-import mekanism.api.chemical.Chemical;
-import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.ChemicalType;
 import mekanism.api.chemical.gas.GasStack;
+import mekanism.api.chemical.infuse.InfusionStack;
+import mekanism.api.chemical.pigment.PigmentStack;
+import mekanism.api.chemical.slurry.SlurryStack;
 import mekanism.api.math.FloatingLong;
 import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
-import mekanism.api.recipes.ingredients.creator.IChemicalStackIngredientCreator;
 import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess;
 import mekanism.common.recipe.ingredient.creator.ItemStackIngredientCreator;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
 public interface MekComponents {
@@ -142,6 +142,13 @@ public interface MekComponents {
 		public ChemicalStackIngredient<?, ?> read(RecipeJS recipe, Object from) {
 			if (from instanceof ChemicalStackIngredient<?, ?> in) {
 				return in;
+			} else if (from instanceof Map<?, ?> || from instanceof JsonObject) {
+				var map = MapJS.of(from);
+				var cw = map == null || map.isEmpty() ? null : ChemicalWrapper.find(map);
+
+				if (cw != null) {
+					return cw.ingredient(map.get(cw.key()).toString(), map.containsKey("amount") ? ((Number) map.get("amount")).longValue() : 0L);
+				}
 			}
 
 			throw new RecipeExceptionJS("Cannot read chemical stack ingredient from " + from);
@@ -160,141 +167,15 @@ public interface MekComponents {
 		}
 	};
 
-	private static <C extends Chemical<C>, S extends ChemicalStack<C>, I extends ChemicalStackIngredient<C, S>> I parseChemicalIngredient(@Nullable Object o, String jsonKey, int defaultAmount, IChemicalStackIngredientCreator<C, S, I> creator) {
-		// TODO: make a proper wrapper
-		return creator.deserialize(wrapChemical(o instanceof Map ? MapJS.json(o) : JsonUtils.of(o), jsonKey, defaultAmount));
-	}
+	RecipeComponent<ChemicalStackIngredient.GasStackIngredient> GAS_INPUT = new ChemicalWrapper.InputComponent<>(ChemicalWrapper.GAS);
+	RecipeComponent<ChemicalStackIngredient.InfusionStackIngredient> INFUSE_TYPE_INPUT = new ChemicalWrapper.InputComponent<>(ChemicalWrapper.INFUSE_TYPE);
+	RecipeComponent<ChemicalStackIngredient.PigmentStackIngredient> PIGMENT_INPUT = new ChemicalWrapper.InputComponent<>(ChemicalWrapper.PIGMENT);
+	RecipeComponent<ChemicalStackIngredient.SlurryStackIngredient> SLURRY_INPUT = new ChemicalWrapper.InputComponent<>(ChemicalWrapper.SLURRY);
 
-	private static JsonElement wrapChemical(@Nullable JsonElement json, String jsonKey, int defaultAmount) {
-		if (json == null || json.isJsonNull()) {
-			return json;
-		} else if (json.isJsonPrimitive()) {
-			var string = json.getAsString().trim();
-			var amount = defaultAmount;
-
-			int spaceIndex = string.indexOf(' ');
-			if (spaceIndex >= 2 && string.indexOf('x') == spaceIndex - 1) {
-				amount = Integer.parseInt(string.substring(0, spaceIndex - 1));
-				string = string.substring(spaceIndex + 1);
-			}
-
-			var output = new JsonObject();
-
-			if (string.startsWith("#")) {
-				output.addProperty("tag", string.substring(1));
-			} else {
-				output.addProperty(jsonKey, string);
-			}
-
-			output.addProperty("amount", amount);
-			return output;
-		} else if (json.isJsonObject()) {
-			var output = json.getAsJsonObject();
-			if (!output.has("amount")) {
-				output.addProperty("amount", defaultAmount);
-			}
-			return output;
-		} else if (json.isJsonArray()) {
-			var output = new JsonArray();
-			for (var element : json.getAsJsonArray()) {
-				output.add(wrapChemical(element, jsonKey, defaultAmount));
-			}
-			return output;
-		} else {
-			throw new IllegalArgumentException("Invalid chemical ingredient: " + json);
-		}
-	}
-
-	RecipeComponent<ChemicalStackIngredient.GasStackIngredient> GAS_INPUT = new RecipeComponent<>() {
-		@Override
-		public ComponentRole role() {
-			return ComponentRole.INPUT;
-		}
-
-		@Override
-		public Class<?> componentClass() {
-			return ChemicalStackIngredient.GasStackIngredient.class;
-		}
-
-		@Override
-		public JsonElement write(RecipeJS recipe, ChemicalStackIngredient.GasStackIngredient value) {
-			return value.serialize();
-		}
-
-		@Override
-		public ChemicalStackIngredient.GasStackIngredient read(RecipeJS recipe, Object from) {
-			if (from instanceof ChemicalStackIngredient.GasStackIngredient i) {
-				return i;
-			} else {
-				return parseChemicalIngredient(from, JsonConstants.GAS, 1000, IngredientCreatorAccess.gas());
-			}
-		}
-	};
-
-	RecipeComponent<ChemicalStackIngredient.InfusionStackIngredient> INFUSION_INPUT = new RecipeComponent<>() {
-		@Override
-		public ComponentRole role() {
-			return ComponentRole.INPUT;
-		}
-
-		@Override
-		public Class<?> componentClass() {
-			return ChemicalStackIngredient.InfusionStackIngredient.class;
-		}
-
-		@Override
-		public JsonElement write(RecipeJS recipe, ChemicalStackIngredient.InfusionStackIngredient value) {
-			return value.serialize();
-		}
-
-		@Override
-		public ChemicalStackIngredient.InfusionStackIngredient read(RecipeJS recipe, Object from) {
-			if (from instanceof ChemicalStackIngredient.InfusionStackIngredient i) {
-				return i;
-			} else {
-				return parseChemicalIngredient(from, JsonConstants.INFUSE_TYPE, 10, IngredientCreatorAccess.infusion());
-			}
-		}
-	};
-
-	RecipeComponent<GasStack> GAS_OUTPUT = new RecipeComponent<>() {
-		@Override
-		public ComponentRole role() {
-			return ComponentRole.OUTPUT;
-		}
-
-		@Override
-		public Class<?> componentClass() {
-			return GasStack.class;
-		}
-
-		@Override
-		public JsonElement write(RecipeJS recipe, GasStack value) {
-			return SerializerHelper.serializeGasStack(value);
-		}
-
-		@Override
-		public GasStack read(RecipeJS recipe, Object from) {
-			if (from instanceof GasStack s) {
-				return s;
-			} else if (from instanceof JsonObject json) {
-				return SerializerHelper.deserializeGas(json);
-			} else if (from instanceof CharSequence) {
-				JsonObject json = new JsonObject();
-				json.addProperty("gas", from.toString());
-				json.addProperty("amount", 1000);
-				return SerializerHelper.deserializeGas(json);
-			} else {
-				JsonObject json = MapJS.json(from);
-
-				if (!json.has("amount")) {
-					json.addProperty("amount", 1000);
-				}
-
-				return SerializerHelper.deserializeGas(json);
-			}
-		}
-	};
+	RecipeComponent<GasStack> GAS_OUTPUT = new ChemicalWrapper.OutputComponent<>(ChemicalWrapper.GAS);
+	RecipeComponent<InfusionStack> INFUSE_TYPE_OUTPUT = new ChemicalWrapper.OutputComponent<>(ChemicalWrapper.INFUSE_TYPE);
+	RecipeComponent<PigmentStack> PIGMENT_OUTPUT = new ChemicalWrapper.OutputComponent<>(ChemicalWrapper.PIGMENT);
+	RecipeComponent<SlurryStack> SLURRY_OUTPUT = new ChemicalWrapper.OutputComponent<>(ChemicalWrapper.SLURRY);
 
 	RecipeComponent<OutputItem> SECONDARY_OUTPUT_COMPONENT = new RecipeComponentWithParent<>() {
 		@Override
@@ -332,6 +213,11 @@ public interface MekComponents {
 		@Override
 		public JsonElement write(RecipeJS recipe, FloatingLong value) {
 			return new JsonPrimitive(value);
+		}
+
+		@Override
+		public TypeDescJS constructorDescription(DescriptionContext ctx) {
+			return TypeDescJS.NUMBER;
 		}
 
 		@Override
