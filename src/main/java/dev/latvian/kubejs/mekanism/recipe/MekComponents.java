@@ -140,9 +140,12 @@ public interface MekComponents {
 
 		@Override
 		public TypeDescJS constructorDescription(DescriptionContext ctx) {
-			// return TypeDescJS.object().add(wrapper.key, TypeDescJS.STRING).add(JsonConstants.AMOUNT, TypeDescJS.NUMBER).or(TypeDescJS.STRING);
-
-			return RecipeComponent.super.constructorDescription(ctx);
+			return TypeDescJS.object()
+						   .add(ChemicalWrapper.GAS.key(), TypeDescJS.STRING, true)
+						   .add(ChemicalWrapper.INFUSE_TYPE.key(), TypeDescJS.STRING, true)
+						   .add(ChemicalWrapper.PIGMENT.key(), TypeDescJS.STRING, true)
+						   .add(ChemicalWrapper.SLURRY.key(), TypeDescJS.STRING, true)
+						   .add(JsonConstants.AMOUNT, TypeDescJS.NUMBER, true);
 		}
 
 		@Override
