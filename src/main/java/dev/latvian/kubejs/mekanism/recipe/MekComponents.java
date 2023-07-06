@@ -139,6 +139,13 @@ public interface MekComponents {
 		}
 
 		@Override
+		public TypeDescJS constructorDescription(DescriptionContext ctx) {
+			// return TypeDescJS.object().add(wrapper.key, TypeDescJS.STRING).add(JsonConstants.AMOUNT, TypeDescJS.NUMBER).or(TypeDescJS.STRING);
+
+			return RecipeComponent.super.constructorDescription(ctx);
+		}
+
+		@Override
 		public ChemicalStackIngredient<?, ?> read(RecipeJS recipe, Object from) {
 			if (from instanceof ChemicalStackIngredient<?, ?> in) {
 				return in;

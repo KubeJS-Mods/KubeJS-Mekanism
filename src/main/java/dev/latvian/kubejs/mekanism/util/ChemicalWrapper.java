@@ -28,10 +28,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -143,7 +141,7 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 
 		@Override
 		public TypeDescJS constructorDescription(DescriptionContext ctx) {
-			return TypeDescJS.STRING.or(TypeDescJS.object(List.of(Pair.of(wrapper.key, TypeDescJS.STRING), Pair.of(JsonConstants.AMOUNT, TypeDescJS.NUMBER))));
+			return TypeDescJS.object().add(wrapper.key, TypeDescJS.STRING).add(JsonConstants.AMOUNT, TypeDescJS.NUMBER).or(TypeDescJS.STRING);
 		}
 
 		@Override
@@ -177,7 +175,7 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 
 		@Override
 		public TypeDescJS constructorDescription(DescriptionContext ctx) {
-			return TypeDescJS.STRING.or(TypeDescJS.object(List.of(Pair.of(wrapper.key, TypeDescJS.STRING), Pair.of(JsonConstants.AMOUNT, TypeDescJS.NUMBER))));
+			return TypeDescJS.object().add(wrapper.key, TypeDescJS.STRING).add(JsonConstants.AMOUNT, TypeDescJS.NUMBER).or(TypeDescJS.STRING);
 		}
 
 		@Override
