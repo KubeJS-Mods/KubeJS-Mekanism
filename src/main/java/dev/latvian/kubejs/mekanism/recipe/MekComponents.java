@@ -10,7 +10,6 @@ import dev.latvian.mods.kubejs.recipe.InputReplacement;
 import dev.latvian.mods.kubejs.recipe.ItemMatch;
 import dev.latvian.mods.kubejs.recipe.RecipeExceptionJS;
 import dev.latvian.mods.kubejs.recipe.RecipeJS;
-import dev.latvian.mods.kubejs.recipe.RecipeKey;
 import dev.latvian.mods.kubejs.recipe.ReplacementMatch;
 import dev.latvian.mods.kubejs.recipe.component.ComponentRole;
 import dev.latvian.mods.kubejs.recipe.component.EnumComponent;
@@ -20,6 +19,7 @@ import dev.latvian.mods.kubejs.recipe.component.RecipeComponentValue;
 import dev.latvian.mods.kubejs.recipe.component.RecipeComponentWithParent;
 import dev.latvian.mods.kubejs.typings.desc.DescriptionContext;
 import dev.latvian.mods.kubejs.typings.desc.TypeDescJS;
+import dev.latvian.mods.kubejs.util.JsonIO;
 import dev.latvian.mods.kubejs.util.MapJS;
 import mekanism.api.JsonConstants;
 import mekanism.api.SerializerHelper;
@@ -165,15 +165,21 @@ public interface MekComponents {
 		}
 
 		@Override
-		public ChemicalStackIngredient<?, ?> readFromJson(RecipeJS recipe, RecipeKey<ChemicalStackIngredient<?, ?>> key, JsonObject json) {
-			ChemicalType chemicalType = SerializerHelper.getChemicalType(json);
-			return IngredientCreatorAccess.getCreatorForType(chemicalType).deserialize(json.get(key.name));
-		}
-
-		@Override
 		public void writeToJson(RecipeComponentValue<ChemicalStackIngredient<?, ?>> value, JsonObject json) {
 			RecipeComponent.super.writeToJson(value, json);
 			json.addProperty(JsonConstants.CHEMICAL_TYPE, ChemicalType.getTypeFor(value.value).getSerializedName());
+		}
+
+		@Override
+		public void readFromJson(RecipeComponentValue<ChemicalStackIngredient<?, ?>> cv, JsonObject json) {
+			ChemicalType chemicalType = SerializerHelper.getChemicalType(json);
+			cv.value = IngredientCreatorAccess.getCreatorForType(chemicalType).deserialize(json.get(cv.key.name));
+		}
+
+		@Override
+		public void readFromMap(RecipeComponentValue<ChemicalStackIngredient<?, ?>> cv, Map<?, ?> map) {
+			ChemicalType chemicalType = ChemicalType.fromString(map.get(JsonConstants.CHEMICAL_TYPE).toString());
+			cv.value = IngredientCreatorAccess.getCreatorForType(chemicalType).deserialize(JsonIO.of(map.get(cv.key.name)));
 		}
 	};
 
@@ -203,14 +209,21 @@ public interface MekComponents {
 		}
 
 		@Override
-		public OutputItem readFromJson(RecipeJS recipe, RecipeKey<OutputItem> key, JsonObject json) {
-			var item = ItemComponents.OUTPUT.readFromJson(recipe, key, json);
+		public void readFromJson(RecipeComponentValue<OutputItem> cv, JsonObject json) {
+			ItemComponents.OUTPUT.readFromJson(cv, json);
 
-			if (item != null && json.has(JsonConstants.SECONDARY_CHANCE)) {
-				item = item.withChance(json.get(JsonConstants.SECONDARY_CHANCE).getAsDouble());
+			if (cv.value != null && json.has(JsonConstants.SECONDARY_CHANCE)) {
+				cv.value = cv.value.withChance(json.get(JsonConstants.SECONDARY_CHANCE).getAsDouble());
 			}
+		}
 
-			return item;
+		@Override
+		public void readFromMap(RecipeComponentValue<OutputItem> cv, Map<?, ?> map) {
+			ItemComponents.OUTPUT.readFromMap(cv, map);
+
+			if (cv.value != null && map.containsKey(JsonConstants.SECONDARY_CHANCE)) {
+				cv.value = cv.value.withChance(((Number) map.get(JsonConstants.SECONDARY_CHANCE)).doubleValue());
+			}
 		}
 	};
 
