@@ -165,19 +165,19 @@ public interface MekComponents {
 		}
 
 		@Override
-		public void writeToJson(RecipeComponentValue<ChemicalStackIngredient<?, ?>> value, JsonObject json) {
-			RecipeComponent.super.writeToJson(value, json);
-			json.addProperty(JsonConstants.CHEMICAL_TYPE, ChemicalType.getTypeFor(value.value).getSerializedName());
+		public void writeToJson(RecipeJS recipe, RecipeComponentValue<ChemicalStackIngredient<?, ?>> cv, JsonObject json) {
+			RecipeComponent.super.writeToJson(recipe, cv, json);
+			json.addProperty(JsonConstants.CHEMICAL_TYPE, ChemicalType.getTypeFor(cv.value).getSerializedName());
 		}
 
 		@Override
-		public void readFromJson(RecipeComponentValue<ChemicalStackIngredient<?, ?>> cv, JsonObject json) {
+		public void readFromJson(RecipeJS recipe, RecipeComponentValue<ChemicalStackIngredient<?, ?>> cv, JsonObject json) {
 			ChemicalType chemicalType = SerializerHelper.getChemicalType(json);
 			cv.value = IngredientCreatorAccess.getCreatorForType(chemicalType).deserialize(json.get(cv.key.name));
 		}
 
 		@Override
-		public void readFromMap(RecipeComponentValue<ChemicalStackIngredient<?, ?>> cv, Map<?, ?> map) {
+		public void readFromMap(RecipeJS recipe, RecipeComponentValue<ChemicalStackIngredient<?, ?>> cv, Map<?, ?> map) {
 			ChemicalType chemicalType = ChemicalType.fromString(map.get(JsonConstants.CHEMICAL_TYPE).toString());
 			cv.value = IngredientCreatorAccess.getCreatorForType(chemicalType).deserialize(JsonIO.of(map.get(cv.key.name)));
 		}
@@ -200,17 +200,17 @@ public interface MekComponents {
 		}
 
 		@Override
-		public void writeToJson(RecipeComponentValue<OutputItem> value, JsonObject json) {
-			ItemComponents.OUTPUT.writeToJson(value, json);
+		public void writeToJson(RecipeJS recipe, RecipeComponentValue<OutputItem> cv, JsonObject json) {
+			ItemComponents.OUTPUT.writeToJson(recipe, cv, json);
 
-			if (value.value.hasChance()) {
-				json.addProperty(JsonConstants.SECONDARY_CHANCE, value.value.getChance());
+			if (cv.value.hasChance()) {
+				json.addProperty(JsonConstants.SECONDARY_CHANCE, cv.value.getChance());
 			}
 		}
 
 		@Override
-		public void readFromJson(RecipeComponentValue<OutputItem> cv, JsonObject json) {
-			ItemComponents.OUTPUT.readFromJson(cv, json);
+		public void readFromJson(RecipeJS recipe, RecipeComponentValue<OutputItem> cv, JsonObject json) {
+			ItemComponents.OUTPUT.readFromJson(recipe, cv, json);
 
 			if (cv.value != null && json.has(JsonConstants.SECONDARY_CHANCE)) {
 				cv.value = cv.value.withChance(json.get(JsonConstants.SECONDARY_CHANCE).getAsDouble());
@@ -218,8 +218,8 @@ public interface MekComponents {
 		}
 
 		@Override
-		public void readFromMap(RecipeComponentValue<OutputItem> cv, Map<?, ?> map) {
-			ItemComponents.OUTPUT.readFromMap(cv, map);
+		public void readFromMap(RecipeJS recipe, RecipeComponentValue<OutputItem> cv, Map<?, ?> map) {
+			ItemComponents.OUTPUT.readFromMap(recipe, cv, map);
 
 			if (cv.value != null && map.containsKey(JsonConstants.SECONDARY_CHANCE)) {
 				cv.value = cv.value.withChance(((Number) map.get(JsonConstants.SECONDARY_CHANCE)).doubleValue());
