@@ -1,6 +1,6 @@
 modLoader = "javafml"
 loaderVersion = "[40,)"
-issueTrackerURL = "https://github.com/KubeJS-Mods/KubeJS-Mekanism/issues"
+issueTrackerURL = "https://kubejs.com/support?source=kubejs_mekanism&mc=1902&loader=forge"
 license = "GNU LGPLv3"
 
 [[mods]]
