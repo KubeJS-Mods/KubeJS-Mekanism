@@ -6,26 +6,20 @@ import com.google.gson.JsonPrimitive;
 import dev.latvian.kubejs.mekanism.util.ChemicalWrapper;
 import dev.latvian.mods.kubejs.item.InputItem;
 import dev.latvian.mods.kubejs.item.OutputItem;
-import dev.latvian.mods.kubejs.recipe.InputReplacement;
-import dev.latvian.mods.kubejs.recipe.ItemMatch;
-import dev.latvian.mods.kubejs.recipe.RecipeExceptionJS;
-import dev.latvian.mods.kubejs.recipe.RecipeJS;
-import dev.latvian.mods.kubejs.recipe.ReplacementMatch;
-import dev.latvian.mods.kubejs.recipe.component.ComponentRole;
-import dev.latvian.mods.kubejs.recipe.component.EnumComponent;
-import dev.latvian.mods.kubejs.recipe.component.ItemComponents;
-import dev.latvian.mods.kubejs.recipe.component.RecipeComponent;
-import dev.latvian.mods.kubejs.recipe.component.RecipeComponentValue;
-import dev.latvian.mods.kubejs.recipe.component.RecipeComponentWithParent;
+import dev.latvian.mods.kubejs.recipe.*;
+import dev.latvian.mods.kubejs.recipe.component.*;
 import dev.latvian.mods.kubejs.typings.desc.DescriptionContext;
 import dev.latvian.mods.kubejs.typings.desc.TypeDescJS;
 import dev.latvian.mods.kubejs.util.JsonIO;
 import dev.latvian.mods.kubejs.util.MapJS;
+import dev.latvian.mods.kubejs.util.UtilsJS;
 import mekanism.api.JsonConstants;
 import mekanism.api.SerializerHelper;
+import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.ChemicalType;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.chemical.infuse.InfusionStack;
+import mekanism.api.chemical.merged.BoxedChemicalStack;
 import mekanism.api.chemical.pigment.PigmentStack;
 import mekanism.api.chemical.slurry.SlurryStack;
 import mekanism.api.math.FloatingLong;
@@ -33,8 +27,12 @@ import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
 import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess;
 import mekanism.common.recipe.ingredient.creator.ItemStackIngredientCreator;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 
 import java.util.Map;
+
+import static mekanism.api.JsonConstants.AMOUNT;
 
 public interface MekComponents {
 	RecipeComponent<ItemStackIngredient> INPUT_ITEM = new RecipeComponent<>() {
@@ -140,12 +138,12 @@ public interface MekComponents {
 
 		@Override
 		public TypeDescJS constructorDescription(DescriptionContext ctx) {
-			return TypeDescJS.object()
-						   .add(ChemicalWrapper.GAS.key(), TypeDescJS.STRING, true)
-						   .add(ChemicalWrapper.INFUSE_TYPE.key(), TypeDescJS.STRING, true)
-						   .add(ChemicalWrapper.PIGMENT.key(), TypeDescJS.STRING, true)
-						   .add(ChemicalWrapper.SLURRY.key(), TypeDescJS.STRING, true)
-						   .add(JsonConstants.AMOUNT, TypeDescJS.NUMBER, true);
+			return TypeDescJS.any(
+					TypeDescJS.object().add(ChemicalWrapper.GAS.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true),
+					TypeDescJS.object().add(ChemicalWrapper.INFUSE_TYPE.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true),
+					TypeDescJS.object().add(ChemicalWrapper.PIGMENT.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true),
+					TypeDescJS.object().add(ChemicalWrapper.SLURRY.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true)
+			);
 		}
 
 		@Override
@@ -157,7 +155,15 @@ public interface MekComponents {
 				var cw = map == null || map.isEmpty() ? null : ChemicalWrapper.find(map);
 
 				if (cw != null) {
-					return cw.ingredient(map.get(cw.key()).toString(), map.containsKey("amount") ? ((Number) map.get("amount")).longValue() : 0L);
+					var id = map.get(cw.key());
+					var amount = map.containsKey(JsonConstants.AMOUNT) ? ((Number) map.get(JsonConstants.AMOUNT)).longValue() : cw.defaultAmount();
+					if (id != null) {
+						return cw.ingredient(id.toString(), amount);
+					} else {
+						if (map.containsKey(JsonConstants.TAG)) {
+							return cw.creator().from(TagKey.create(UtilsJS.cast(cw.registry()), new ResourceLocation(map.get(JsonConstants.TAG).toString())), amount);
+						}
+					}
 				}
 			}
 
@@ -180,6 +186,51 @@ public interface MekComponents {
 		public void readFromMap(RecipeJS recipe, RecipeComponentValue<ChemicalStackIngredient<?, ?>> cv, Map<?, ?> map) {
 			ChemicalType chemicalType = ChemicalType.fromString(map.get(JsonConstants.CHEMICAL_TYPE).toString());
 			cv.value = IngredientCreatorAccess.getCreatorForType(chemicalType).deserialize(JsonIO.of(map.get(cv.key.name)));
+		}
+	};
+
+	RecipeComponent<ChemicalStack<?>> BOXED_CHEMICAL_OUTPUT = new RecipeComponent<>() {
+		@Override
+		public ComponentRole role() {
+			return ComponentRole.OUTPUT;
+		}
+
+		@Override
+		public Class<?> componentClass() {
+			return ChemicalStack.class;
+		}
+
+		@Override
+		public JsonElement write(RecipeJS recipe, ChemicalStack<?> value) {
+			return SerializerHelper.serializeBoxedChemicalStack(BoxedChemicalStack.box(value));
+		}
+
+		@Override
+		public TypeDescJS constructorDescription(DescriptionContext ctx) {
+			return TypeDescJS.any(
+					TypeDescJS.object().add(ChemicalWrapper.GAS.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true),
+					TypeDescJS.object().add(ChemicalWrapper.INFUSE_TYPE.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true),
+					TypeDescJS.object().add(ChemicalWrapper.PIGMENT.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true),
+					TypeDescJS.object().add(ChemicalWrapper.SLURRY.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true)
+			);
+		}
+
+		@Override
+		public ChemicalStack<?> read(RecipeJS recipe, Object from) {
+			if (from instanceof ChemicalStack<?> in) {
+				return in;
+			} else if (from instanceof Map<?, ?> || from instanceof JsonObject) {
+				var map = MapJS.of(from);
+				var cw = map == null || map.isEmpty() ? null : ChemicalWrapper.find(map);
+
+				if (cw != null && map.containsKey(cw.key())) {
+					var id = map.get(cw.key());
+					var amount = map.containsKey(JsonConstants.AMOUNT) ? ((Number) map.get(JsonConstants.AMOUNT)).longValue() : cw.defaultAmount();
+					return cw.stack(id.toString(), amount);
+				}
+			}
+
+			throw new RecipeExceptionJS("Cannot read boxed chemical stack from " + from);
 		}
 	};
 
