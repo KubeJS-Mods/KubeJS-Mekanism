@@ -164,7 +164,7 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 
 				if (map != null) {
 					var id = map.get(wrapper.key());
-					var amount = map.containsKey(JsonConstants.AMOUNT) ? ((Number) map.get(JsonConstants.AMOUNT)).longValue() : 0L;
+					var amount = map.containsKey(JsonConstants.AMOUNT) ? ((Number) map.get(JsonConstants.AMOUNT)).longValue() : wrapper.defaultAmount;
 					if (id != null) {
 						return wrapper.ingredient(id.toString(), amount);
 					} else {
