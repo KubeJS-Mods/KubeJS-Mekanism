@@ -1,7 +1,7 @@
 plugins {
-	id "dev.architectury.loom" version "0.12.0-SNAPSHOT"
+	id "dev.architectury.loom" version "1.2-SNAPSHOT"
 	id "com.matthewprenger.cursegradle" version "1.4.0"
-	id "io.github.juuxel.loom-quiltflower" version "1.7.1"
+	id "io.github.juuxel.loom-vineflower" version "1.11.0"
 	id 'maven-publish'
 }
 
@@ -103,18 +103,15 @@ jar {
 				"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
 		])
 	}
+
+	archiveClassifier.set "dev"
 }
 
 publishing {
 	publications {
 		mavenForge(MavenPublication) {
 			artifactId = rootProject.archivesBaseName
-			artifact(remapJar) {
-				classifier null
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
+			from components.java
 		}
 	}
 
