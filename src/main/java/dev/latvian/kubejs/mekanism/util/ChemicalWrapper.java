@@ -108,7 +108,7 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 		}
 
 		if (id.startsWith("#")) {
-			var tag = TagKey.create(registry, new ResourceLocation(id.substring(1)));
+			var tag = tag(id.substring(1));
 			return creator.from(tag, amount);
 		}
 
@@ -123,7 +123,16 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 		return (S) chemicalFromId.apply(new ResourceLocation(id)).getStack(amount);
 	}
 
-	public record InputComponent<C extends Chemical<C>, S extends ChemicalStack<C>, I extends ChemicalStackIngredient<C, S>>(ChemicalWrapper<C, S, I> wrapper) implements RecipeComponent<I> {
+	private TagKey<C> tag(String id) {
+		return tag(new ResourceLocation(id));
+	}
+
+	private TagKey<C> tag(ResourceLocation id) {
+		return TagKey.create(registry, id);
+	}
+
+	public record InputComponent<C extends Chemical<C>, S extends ChemicalStack<C>, I extends ChemicalStackIngredient<C, S>>(
+			ChemicalWrapper<C, S, I> wrapper) implements RecipeComponent<I> {
 		@Override
 		public ComponentRole role() {
 			return ComponentRole.INPUT;
@@ -154,7 +163,15 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 				var map = MapJS.of(from);
 
 				if (map != null) {
-					return wrapper.ingredient(map.get(wrapper.key()).toString(), map.containsKey(JsonConstants.AMOUNT) ? ((Number) map.get(JsonConstants.AMOUNT)).longValue() : 0L);
+					var id = map.get(wrapper.key());
+					var amount = map.containsKey(JsonConstants.AMOUNT) ? ((Number) map.get(JsonConstants.AMOUNT)).longValue() : 0L;
+					if (id != null) {
+						return wrapper.ingredient(id.toString(), amount);
+					} else {
+						if (map.containsKey(JsonConstants.TAG)) {
+							return wrapper.creator().from(wrapper.tag(map.get(JsonConstants.TAG).toString()), amount);
+						}
+					}
 				}
 			}
 
@@ -162,7 +179,8 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 		}
 	}
 
-	public record OutputComponent<C extends Chemical<C>, S extends ChemicalStack<C>, I extends ChemicalStackIngredient<C, S>>(ChemicalWrapper<C, S, I> wrapper) implements RecipeComponent<S> {
+	public record OutputComponent<C extends Chemical<C>, S extends ChemicalStack<C>, I extends ChemicalStackIngredient<C, S>>(
+			ChemicalWrapper<C, S, I> wrapper) implements RecipeComponent<S> {
 		@Override
 		public ComponentRole role() {
 			return ComponentRole.OUTPUT;
