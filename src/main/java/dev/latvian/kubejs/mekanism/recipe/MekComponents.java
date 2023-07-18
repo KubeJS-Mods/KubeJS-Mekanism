@@ -29,10 +29,9 @@ import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess;
 import mekanism.common.recipe.ingredient.creator.ItemStackIngredientCreator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-
-import static mekanism.api.JsonConstants.AMOUNT;
 
 public interface MekComponents {
 	RecipeComponent<ItemStackIngredient> INPUT_ITEM = new RecipeComponent<>() {
@@ -139,10 +138,10 @@ public interface MekComponents {
 		@Override
 		public TypeDescJS constructorDescription(DescriptionContext ctx) {
 			return TypeDescJS.any(
-					TypeDescJS.object().add(ChemicalWrapper.GAS.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true),
-					TypeDescJS.object().add(ChemicalWrapper.INFUSE_TYPE.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true),
-					TypeDescJS.object().add(ChemicalWrapper.PIGMENT.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true),
-					TypeDescJS.object().add(ChemicalWrapper.SLURRY.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true)
+					chemicalWithAmount(ChemicalWrapper.GAS, ctx),
+					chemicalWithAmount(ChemicalWrapper.INFUSE_TYPE, ctx),
+					chemicalWithAmount(ChemicalWrapper.PIGMENT, ctx),
+					chemicalWithAmount(ChemicalWrapper.SLURRY, ctx)
 			);
 		}
 
@@ -208,10 +207,10 @@ public interface MekComponents {
 		@Override
 		public TypeDescJS constructorDescription(DescriptionContext ctx) {
 			return TypeDescJS.any(
-					TypeDescJS.object().add(ChemicalWrapper.GAS.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true),
-					TypeDescJS.object().add(ChemicalWrapper.INFUSE_TYPE.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true),
-					TypeDescJS.object().add(ChemicalWrapper.PIGMENT.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true),
-					TypeDescJS.object().add(ChemicalWrapper.SLURRY.key(), TypeDescJS.STRING).add(AMOUNT, TypeDescJS.NUMBER, true)
+					chemicalWithAmount(ChemicalWrapper.GAS, ctx),
+					chemicalWithAmount(ChemicalWrapper.INFUSE_TYPE, ctx),
+					chemicalWithAmount(ChemicalWrapper.PIGMENT, ctx),
+					chemicalWithAmount(ChemicalWrapper.SLURRY, ctx)
 			);
 		}
 
@@ -233,6 +232,11 @@ public interface MekComponents {
 			throw new RecipeExceptionJS("Cannot read boxed chemical stack from " + from);
 		}
 	};
+
+	@NotNull
+	private static TypeDescJS chemicalWithAmount(ChemicalWrapper<?, ?, ?> wrapper, DescriptionContext ctx) {
+		return TypeDescJS.object().add(wrapper.key(), wrapper.describe(ctx)).add(JsonConstants.AMOUNT, TypeDescJS.NUMBER, true);
+	}
 
 	RecipeComponent<ChemicalStackIngredient.GasStackIngredient> GAS_INPUT = new ChemicalWrapper.InputComponent<>(ChemicalWrapper.GAS);
 	RecipeComponent<ChemicalStackIngredient.InfusionStackIngredient> INFUSE_TYPE_INPUT = new ChemicalWrapper.InputComponent<>(ChemicalWrapper.INFUSE_TYPE);

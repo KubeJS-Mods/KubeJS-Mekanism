@@ -41,6 +41,7 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 		IChemicalStackIngredientCreator<C, S, I> creator,
 		long defaultAmount,
 		Function<ResourceLocation, C> chemicalFromId,
+		Class<C> chemicalType,
 		Class<S> stackType,
 		Class<I> ingredientType
 ) {
@@ -51,6 +52,7 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 			IngredientCreatorAccess.gas(),
 			1000L,
 			Gas::getFromRegistry,
+			Gas.class,
 			GasStack.class,
 			ChemicalStackIngredient.GasStackIngredient.class
 	);
@@ -62,6 +64,7 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 			IngredientCreatorAccess.infusion(),
 			10L,
 			InfuseType::getFromRegistry,
+			InfuseType.class,
 			InfusionStack.class,
 			ChemicalStackIngredient.InfusionStackIngredient.class
 	);
@@ -73,6 +76,7 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 			IngredientCreatorAccess.pigment(),
 			1000L,
 			Pigment::getFromRegistry,
+			Pigment.class,
 			PigmentStack.class,
 			ChemicalStackIngredient.PigmentStackIngredient.class
 	);
@@ -84,6 +88,7 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 			IngredientCreatorAccess.slurry(),
 			1000L,
 			Slurry::getFromRegistry,
+			Slurry.class,
 			SlurryStack.class,
 			ChemicalStackIngredient.SlurryStackIngredient.class
 	);
@@ -123,6 +128,10 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 		return (S) chemicalFromId.apply(new ResourceLocation(id)).getStack(amount);
 	}
 
+	public TypeDescJS describe(DescriptionContext ctx) {
+		return TypeDescJS.STRING.or(ctx.javaType(chemicalType));
+	}
+
 	private TagKey<C> tag(String id) {
 		return tag(new ResourceLocation(id));
 	}
@@ -150,7 +159,7 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 
 		@Override
 		public TypeDescJS constructorDescription(DescriptionContext ctx) {
-			return TypeDescJS.object().add(wrapper.key, TypeDescJS.STRING).add(JsonConstants.AMOUNT, TypeDescJS.NUMBER).or(TypeDescJS.STRING);
+			return TypeDescJS.object().add(wrapper.key, wrapper.describe(ctx)).add(JsonConstants.AMOUNT, TypeDescJS.NUMBER).or(wrapper.describe(ctx));
 		}
 
 		@Override
@@ -193,7 +202,7 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 
 		@Override
 		public TypeDescJS constructorDescription(DescriptionContext ctx) {
-			return TypeDescJS.object().add(wrapper.key, TypeDescJS.STRING).add(JsonConstants.AMOUNT, TypeDescJS.NUMBER).or(TypeDescJS.STRING);
+			return TypeDescJS.object().add(wrapper.key, wrapper.describe(ctx)).add(JsonConstants.AMOUNT, TypeDescJS.NUMBER).or(wrapper.describe(ctx));
 		}
 
 		@Override
