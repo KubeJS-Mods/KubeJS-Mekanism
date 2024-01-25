@@ -26,10 +26,10 @@ import mekanism.api.chemical.slurry.Slurry;
 
 public class MekanismKubeJSPlugin extends KubeJSPlugin {
 	// registry builders for all mekanism chemical subtypes
-	public static final RegistryInfo GAS = RegistryInfo.of(MekanismAPI.gasRegistryName()).type(Gas.class);
-	public static final RegistryInfo INFUSE_TYPE = RegistryInfo.of(MekanismAPI.infuseTypeRegistryName()).type(Slurry.class);
-	public static final RegistryInfo PIGMENT = RegistryInfo.of(MekanismAPI.pigmentRegistryName()).type(Pigment.class);
-	public static final RegistryInfo SLURRY = RegistryInfo.of(MekanismAPI.slurryRegistryName()).type(Slurry.class);
+	public static final RegistryInfo GAS = RegistryInfo.of(MekanismAPI.GAS_REGISTRY_NAME);
+	public static final RegistryInfo INFUSE_TYPE = RegistryInfo.of(MekanismAPI.INFUSE_TYPE_REGISTRY_NAME);
+	public static final RegistryInfo PIGMENT = RegistryInfo.of(MekanismAPI.PIGMENT_REGISTRY_NAME);
+	public static final RegistryInfo SLURRY = RegistryInfo.of(MekanismAPI.SLURRY_REGISTRY_NAME);
 
 	@Override
 	public void init() {
