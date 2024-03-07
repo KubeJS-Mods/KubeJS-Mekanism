@@ -56,7 +56,7 @@ public abstract class KubeJSChemicalBuilder<C extends Chemical<C>,
 	 * @return This builder.
 	 */
 	public S color(int color) {
-		builder().color(color);
+		builder().tint(color);
 		return self();
 	}
 
