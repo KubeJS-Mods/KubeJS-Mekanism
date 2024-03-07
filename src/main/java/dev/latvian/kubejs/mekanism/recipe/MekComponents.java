@@ -3,11 +3,7 @@ package dev.latvian.kubejs.mekanism.recipe;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import dev.architectury.fluid.FluidStack;
 import dev.latvian.kubejs.mekanism.util.ChemicalWrapper;
-import dev.latvian.mods.kubejs.fluid.FluidStackJS;
-import dev.latvian.mods.kubejs.fluid.InputFluid;
 import dev.latvian.mods.kubejs.item.InputItem;
 import dev.latvian.mods.kubejs.item.OutputItem;
 import dev.latvian.mods.kubejs.recipe.*;
@@ -31,8 +27,6 @@ import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
 import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess;
 import mekanism.common.recipe.ingredient.creator.ItemStackIngredientCreator;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.NotNull;
@@ -120,61 +114,6 @@ public interface MekComponents {
 			}
 
 			return original;
-		}
-	};
-
-	RecipeComponent<InputFluid> FLUID_INPUT = new RecipeComponent<>() {
-
-		@Override
-		public Class<?> componentClass() {
-			return InputFluid.class;
-		}
-
-		@Override
-		public JsonElement write(RecipeJS recipe, InputFluid value) {
-			var stack = ((FluidStackJS) value);
-			return stack.kjs$isEmpty() ? null : new JsonPrimitive(stack.getFluidStack().write(new CompoundTag()).toString());
-		}
-
-		private InputFluid readString(RecipeJS recipe, String str) {
-			try {
-				return recipe.readInputFluid(FluidStack.read(TagParser.parseTag(str)));
-			} catch (CommandSyntaxException e) {
-				throw new RuntimeException(e);
-			}
-		}
-
-		@Override
-		public InputFluid read(RecipeJS recipe, Object from) {
-			if(from instanceof JsonPrimitive prim && prim.isString()) {
-				return readString(recipe, prim.getAsString());
-			}
-
-			return recipe.readInputFluid(from);
-		}
-
-		@Override
-		public ComponentRole role() {
-			return ComponentRole.INPUT;
-		}
-
-		@Override
-		public boolean hasPriority(RecipeJS recipe, Object from) {
-			return recipe.inputFluidHasPriority(from);
-		}
-
-		@Override
-		public String checkEmpty(RecipeKey<InputFluid> key, InputFluid value) {
-			if (value.kjs$isEmpty()) {
-				return "Input fluid '" + key.name + "' can't be empty!";
-			}
-
-			return "";
-		}
-
-		@Override
-		public String toString() {
-			return componentType();
 		}
 	};
 
