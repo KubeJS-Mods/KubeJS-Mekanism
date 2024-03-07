@@ -7,7 +7,6 @@ import dev.latvian.mods.kubejs.recipe.component.ItemComponents;
 import dev.latvian.mods.kubejs.recipe.schema.RecipeSchema;
 import mekanism.api.JsonConstants;
 import mekanism.api.chemical.ChemicalStack;
-import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
 
 public interface CrystallizingRecipeSchema {
 	enum CHEMICALS {
