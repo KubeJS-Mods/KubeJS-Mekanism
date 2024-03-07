@@ -60,11 +60,15 @@ dependencies {
 
 	// for testing
 	modLocalRuntime "mekanism:Mekanism:${project.mekanism_version}" // core
-	modLocalRuntime "mekanism:Mekanism:${project.mekanism_version}:additions" // additions
-	modLocalRuntime "mekanism:Mekanism:${project.mekanism_version}:generators" // generators
-	modLocalRuntime "mekanism:Mekanism:${project.mekanism_version}:tools" // tools
+	modLocalRuntime "curse.maven:mekanism-additions-345425:${project.additions}" // additions
+	modLocalRuntime "curse.maven:mekanism-generators-268566:${project.generators}" // generators
+	modLocalRuntime "curse.maven:mekanism-tools-268567:${project.tools}" // tools
 
 	modRuntimeOnly "curse.maven:jei-238222:${jei_file}"
+	modRuntimeOnly "curse.maven:probejs-585406:5054324"
+
+	compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.2"))
+	implementation(include("io.github.llamalad7:mixinextras-forge:0.3.2"))
 }
 
 processResources {
