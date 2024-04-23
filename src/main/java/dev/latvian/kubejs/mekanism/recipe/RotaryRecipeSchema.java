@@ -14,15 +14,13 @@ import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
 
 public interface RotaryRecipeSchema {
-    OrRecipeComponent<InputFluid, RecipeComponentBuilderMap> INPUT = FluidComponents.INPUT.or(
-            new RecipeComponentBuilder(2)
-                    .add(FluidComponents.INPUT.key(JsonConstants.FLUID_INPUT))
-                    .add(MekComponents.GAS_INPUT.key(JsonConstants.GAS_INPUT))
-    );
+    RecipeKey<InputFluid> FLUID_INPUT = FluidComponents.INPUT.key(JsonConstants.FLUID_INPUT).optional(EmptyFluidStackJS.INSTANCE);
     RecipeKey<GasStack> CHEMICAL_OUTPUT = MekComponents.GAS_OUTPUT.key(JsonConstants.GAS_OUTPUT).optional(GasStack.EMPTY);
     RecipeKey<ChemicalStackIngredient.GasStackIngredient> CHEMICAL_INPUT = MekComponents.GAS_INPUT.key(JsonConstants.GAS_INPUT)
             .defaultOptional();
     RecipeKey<OutputFluid> FLUID_OUTPUT = FluidComponents.OUTPUT.key(JsonConstants.FLUID_OUTPUT).optional(EmptyFluidStackJS.INSTANCE);
 
-    RecipeSchema SCHEMA = new RecipeSchema(MekanismRecipeJS.class, MekanismRecipeJS::new, INPUT, CHEMICAL_OUTPUT, CHEMICAL_INPUT, FLUID_OUTPUT);
+    RecipeSchema SCHEMA = new RecipeSchema(RotaryRecipeJS.class, RotaryRecipeJS::new, FLUID_INPUT, CHEMICAL_OUTPUT, CHEMICAL_INPUT, FLUID_OUTPUT)
+            .constructor();
 }
+

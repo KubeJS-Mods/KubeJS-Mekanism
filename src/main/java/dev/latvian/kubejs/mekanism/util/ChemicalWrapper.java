@@ -257,5 +257,25 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 			return null;
 		}
 	}
+
+	public static ChemicalStackIngredient.GasStackIngredient gas(Gas gas) {
+		return IngredientCreatorAccess.gas().from(gas, 10);
+	}
+
+	public static Gas gasTag(TagKey<Gas> tag) {
+		return (Gas) IngredientCreatorAccess.gas().from(tag, 10);
+	}
+
+	public static ChemicalStackIngredient.GasStackIngredient ofGasIngredient(Object o) {
+		if(o instanceof ChemicalStackIngredient.GasStackIngredient gas) {
+			return gas;
+		} else if (o instanceof CharSequence) {
+			final String name = o.toString();
+			if(name.charAt(0) == '#') {
+				return gas(gasTag(TagKey.create(MekanismAPI.GAS_REGISTRY_NAME, new ResourceLocation(name.substring(1)))));
+			}
+		}
+        return null;
+    }
 }
 
