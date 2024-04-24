@@ -24,12 +24,15 @@ import mekanism.api.chemical.slurry.SlurryStack;
 import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
 import mekanism.api.recipes.ingredients.creator.IChemicalStackIngredientCreator;
 import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess;
+import mekanism.common.recipe.ingredient.chemical.MultiChemicalStackIngredient;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -258,23 +261,31 @@ public record ChemicalWrapper<C extends Chemical<C>, S extends ChemicalStack<C>,
 		}
 	}
 
-	public static ChemicalStackIngredient.GasStackIngredient gas(Gas gas) {
-		return IngredientCreatorAccess.gas().from(gas, 10);
-	}
-
-	public static Gas gasTag(TagKey<Gas> tag) {
-		return (Gas) IngredientCreatorAccess.gas().from(tag, 10);
-	}
-
 	public static ChemicalStackIngredient.GasStackIngredient ofGasIngredient(Object o) {
 		if(o instanceof ChemicalStackIngredient.GasStackIngredient gas) {
 			return gas;
 		} else if (o instanceof CharSequence) {
-			final String name = o.toString();
-			if(name.charAt(0) == '#') {
-				return gas(gasTag(TagKey.create(MekanismAPI.GAS_REGISTRY_NAME, new ResourceLocation(name.substring(1)))));
+			long amount = GAS.defaultAmount();
+			String gas = o.toString();
+
+			final int spaceIndex = gas.indexOf(' ');
+			if (spaceIndex >= 2 && gas.indexOf('x') == spaceIndex - 1) {
+				amount = Long.parseLong(gas.substring(0, spaceIndex - 1));
+				gas = gas.substring(spaceIndex + 1);
 			}
+
+			return GAS.ingredient(gas, amount);
+		} else if (o instanceof List<?> list) {
+			List<ChemicalStackIngredient.GasStackIngredient> ingredients = new ArrayList<>(list.size());
+			for (var obj : list) {
+				var ingredient = ofGasIngredient(obj);
+				if (ingredient != null) {
+					ingredients.add(ingredient);
+				}
+			}
+			return GAS.creator().createMulti(ingredients.toArray(new ChemicalStackIngredient.GasStackIngredient[0]));
 		}
+
         return null;
     }
 }
