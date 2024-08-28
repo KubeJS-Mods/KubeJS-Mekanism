@@ -1,0 +1,17 @@
+{
+	"minecraft": 2100,
+	"type": "neoforge",
+	"icon": "https://raw.githubusercontent.com/KubeJS-Mods/KubeJS-Mekanism/main/.lat.ci/icon.png",
+	"version": {
+		"file": "gradle.properties",
+		"pattern": "^mod_version=([\\w.]+)$",
+		"group": 1,
+		"format": "{version}-build.{run_number}"
+	},
+	"downloads": [
+		{
+			"name": "Download",
+			"url": "https://maven.latvian.dev/releases/dev/latvian/mods/kubejs-mekanism-neoforge/{version}/kubejs-mekanism-neoforge-{version}.jar"
+		}
+	]
+}

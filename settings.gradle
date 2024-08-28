@@ -1,9 +1,13 @@
 pluginManagement {
 	repositories {
-		maven { url "https://maven.creeperhost.net/" }
-		maven { url "https://maven.architectury.dev/" }
 		gradlePluginPortal()
+		mavenCentral()
+		maven { url "https://maven.creeperhost.net/" }
 	}
 }
 
-rootProject.name = 'KubeJS-Mekanism-1.19.2'
+plugins {
+	id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+}
+
+rootProject.name = 'KubeJS-Mekanism-1.21.1'

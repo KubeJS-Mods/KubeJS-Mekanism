@@ -1,1 +1,1 @@
-dev.latvian.kubejs.mekanism.MekanismKubeJSPlugin
+dev.latvian.mods.kubejs.mekanism.MekanismKubeJSPlugin mekanism

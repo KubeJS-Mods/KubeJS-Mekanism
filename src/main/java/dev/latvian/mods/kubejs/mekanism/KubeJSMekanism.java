@@ -1,6 +1,6 @@
-package dev.latvian.kubejs.mekanism;
+package dev.latvian.mods.kubejs.mekanism;
 
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.fml.common.Mod;
 
 @Mod(KubeJSMekanism.MOD_ID)
 public class KubeJSMekanism {

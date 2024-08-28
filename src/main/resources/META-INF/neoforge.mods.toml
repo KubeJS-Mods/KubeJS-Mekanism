@@ -1,28 +1,30 @@
 modLoader = "javafml"
-loaderVersion = "[40,)"
-issueTrackerURL = "https://kubejs.com/support?source=kubejs_mekanism&mc=1902&loader=forge"
-license = "GNU LGPLv3"
+loaderVersion = "[2,)"
+issueTrackerURL = "https://kubejs.com/support?source=kubejs_mekanism&mc=2100&loader=neoforge"
+license = "MIT"
 
 [[mods]]
 modId = "kubejs_mekanism"
 version = "${version}"
 displayName = "KubeJS Mekanism"
-authors = "LatvianModder"
+authors = "latvian.dev"
 description = '''
 KubeJS Mekanism integration
 '''
-license = "GNU LGPLv3"
+logoFile = "kubejs_mekanism_logo.png"
+modUrl = "https://kubejs.com"
+displayURL = "https://kubejs.com"
 
 [[dependencies.kubejs_mekanism]]
 modId = "kubejs"
 mandatory = true
-versionRange = "[1902.6.1-build.300,)"
+versionRange = "[${kubejs_version},)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.kubejs_mekanism]]
 modId = "mekanism"
 mandatory = true
-versionRange = "[10.3.8,)"
+versionRange = "[${mekanism_version},)"
 ordering = "AFTER"
 side = "BOTH"
