@@ -1,0 +1,15 @@
+{
+	"keys": [
+		{
+			"name": "output",
+			"role": "output",
+			"type": "fluid_stack"
+		},
+		{
+			"name": "input",
+			"role": "input",
+			"type": "flat_sized_fluid_ingredient"
+		}
+	],
+	"unique": ["output"]
+}

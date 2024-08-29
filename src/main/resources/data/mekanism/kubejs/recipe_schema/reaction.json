@@ -1,0 +1,52 @@
+{
+	"keys": [
+		{
+			"name": "item_input",
+			"role": "input",
+			"type": "flat_sized_ingredient"
+		},
+		{
+			"name": "fluid_input",
+			"role": "input",
+			"type": "flat_sized_fluid_ingredient"
+		},
+		{
+			"name": "chemical_input",
+			"role": "input",
+			"type": "mekanism:chemical_stack_ingredient"
+		},
+		{
+			"name": "duration",
+			"role": "input",
+			"type": "ticks"
+		},
+		{
+			"name": "item_output",
+			"role": "output",
+			"type": "item_stack",
+			"optional": null
+		},
+		{
+			"name": "chemical_output",
+			"role": "output",
+			"type": "mekanism:chemical_stack",
+			"optional": null
+		},
+		{
+			"name": "energy_required",
+			"role": "input",
+			"type": "long<0,max>",
+			"builder_names": ["energy"],
+			"optional": 0
+		}
+	],
+	"unique": ["item_output", "chemical_output"],
+	"constructors": [
+		{
+			"keys": ["item_output", "chemical_output", "item_input", "fluid_input", "chemical_input", "duration"]
+		},
+		{
+			"keys": ["item_input", "fluid_input", "chemical_input", "duration"]
+		}
+	]
+}

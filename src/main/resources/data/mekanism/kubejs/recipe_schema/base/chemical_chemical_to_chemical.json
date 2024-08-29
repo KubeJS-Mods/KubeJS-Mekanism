@@ -1,0 +1,20 @@
+{
+	"keys": [
+		{
+			"name": "output",
+			"role": "output",
+			"type": "mekanism:chemical_stack"
+		},
+		{
+			"name": "left_input",
+			"role": "input",
+			"type": "mekanism:chemical_stack_ingredient"
+		},
+		{
+			"name": "right_input",
+			"role": "input",
+			"type": "mekanism:chemical_stack_ingredient"
+		}
+	],
+	"unique": ["output"]
+}

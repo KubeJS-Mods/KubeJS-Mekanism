@@ -1,0 +1,15 @@
+{
+	"keys": [
+		{
+			"name": "input",
+			"role": "input",
+			"type": "flat_sized_ingredient"
+		},
+		{
+			"name": "output",
+			"role": "output",
+			"type": "long<1,max>"
+		}
+	],
+	"unique": ["input"]
+}

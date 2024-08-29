@@ -1,0 +1,29 @@
+{
+	"keys": [
+		{
+			"name": "output",
+			"role": "output",
+			"type": "item_stack"
+		},
+		{
+			"name": "item_input",
+			"role": "input",
+			"type": "flat_sized_ingredient"
+		},
+		{
+			"name": "chemical_input",
+			"role": "input",
+			"type": "mekanism:chemical_stack_ingredient"
+		},
+		{
+			"name": "duration",
+			"role": "input",
+			"type": "ticks"
+		},
+		{
+			"name": "per_tick_usage",
+			"type": "boolean"
+		}
+	],
+	"unique": ["output"]
+}

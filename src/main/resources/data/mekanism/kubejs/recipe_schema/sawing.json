@@ -1,0 +1,39 @@
+{
+	"keys": [
+		{
+			"name": "input",
+			"role": "input",
+			"type": "flat_sized_ingredient"
+		},
+		{
+			"name": "main_output",
+			"role": "output",
+			"type": "item_stack",
+			"optional": null
+		},
+		{
+			"name": "secondary_output",
+			"role": "output",
+			"type": "item_stack",
+			"optional": null
+		},
+		{
+			"name": "secondary_chance",
+			"role": "output",
+			"type": "double<0.00001,1>",
+			"optional": null
+		}
+	],
+	"unique": ["input"],
+	"constructors": [
+		{
+			"keys": ["main_output", "secondary_output", "secondary_chance", "input"]
+		},
+		{
+			"keys": ["secondary_output", "secondary_chance", "input"]
+		},
+		{
+			"keys": ["main_output", "input"]
+		}
+	]
+}

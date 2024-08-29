@@ -1,0 +1,20 @@
+{
+	"keys": [
+		{
+			"name": "output",
+			"role": "output",
+			"type": "mekanism:chemical_stack"
+		},
+		{
+			"name": "fluid_input",
+			"role": "input",
+			"type": "flat_sized_fluid_ingredient"
+		},
+		{
+			"name": "chemical_input",
+			"role": "input",
+			"type": "mekanism:chemical_stack_ingredient"
+		}
+	],
+	"unique": ["output"]
+}

@@ -1,0 +1,25 @@
+{
+	"keys": [
+		{
+			"name": "left_chemical_output",
+			"role": "output",
+			"type": "mekanism:chemical_stack"
+		},
+		{
+			"name": "right_chemical_output",
+			"role": "output",
+			"type": "mekanism:chemical_stack"
+		},
+		{
+			"name": "input",
+			"role": "input",
+			"type": "flat_sized_fluid_ingredient"
+		},
+		{
+			"name": "energy_multiplier",
+			"type": "long<1,max>",
+			"optional": 1
+		}
+	],
+	"unique": ["left_chemical_output", "right_chemical_output"]
+}
