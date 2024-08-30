@@ -39,17 +39,17 @@ public class MekanismKubeJSPlugin implements KubeJSPlugin {
 	@Override
 	public void registerTypeWrappers(TypeWrapperRegistry registry) {
 		registry.register(Chemical.class, MekanismChemicalWrapper::of);
-		registry.register(ChemicalStack.class, MekanismChemicalWrapper::wrapStack);
-		registry.register(ChemicalIngredient.class, MekanismChemicalWrapper::wrapIngredient);
-		registry.register(ChemicalStackIngredient.class, MekanismChemicalWrapper::wrapStackIngredient);
+		registry.register(ChemicalStack.class, MekanismChemicalWrapper::stackOf);
+		registry.register(ChemicalIngredient.class, MekanismChemicalWrapper::ingredientOf);
+		registry.register(ChemicalStackIngredient.class, MekanismChemicalWrapper::stackIngredientOf);
 	}
 
 	@Override
 	public void registerRecipeComponents(RecipeComponentFactoryRegistry registry) {
-		registry.register(ChemicalRecipeComponents.CHEMICAL);
-		registry.register(ChemicalRecipeComponents.CHEMICAL_STACK);
-		registry.register(ChemicalRecipeComponents.CHEMICAL_INGREDIENT);
-		registry.register(ChemicalRecipeComponents.CHEMICAL_STACK_INGREDIENT);
+		registry.register(ChemicalComponents.CHEMICAL);
+		registry.register(ChemicalComponents.CHEMICAL_STACK);
+		registry.register(ChemicalComponents.CHEMICAL_INGREDIENT);
+		registry.register(ChemicalComponents.CHEMICAL_STACK_INGREDIENT);
 	}
 
 	@Override
