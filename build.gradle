@@ -181,6 +181,7 @@ unifiedPublishing {
 		releaseType = "${ENV.RELEASE_TYPE ?: 'release'}"
 		gameVersions = Arrays.asList(rootProject.supported_versions.split(', '))
 		gameLoaders = ["neoforge"]
+		version = project.version
 		displayName = "$mod_name NeoForge $project.version"
 		changelog = "https://github.com/KubeJS-Mods/KubeJS-Mekanism/commits/main/"
 		mainPublication jar

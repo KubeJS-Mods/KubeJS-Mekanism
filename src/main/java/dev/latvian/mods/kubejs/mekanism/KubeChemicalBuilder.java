@@ -1,6 +1,6 @@
 package dev.latvian.mods.kubejs.mekanism;
 
-import dev.latvian.mods.kubejs.color.Color;
+import dev.latvian.mods.kubejs.color.KubeColor;
 import dev.latvian.mods.kubejs.registry.BuilderBase;
 import dev.latvian.mods.rhino.util.ReturnsSelf;
 import mekanism.api.chemical.Chemical;
@@ -112,8 +112,8 @@ public class KubeChemicalBuilder extends BuilderBase<Chemical> {
 		return this;
 	}
 
-	public KubeChemicalBuilder tint(Color tint) {
-		chemicalBuilder().tint(tint.getRgbJS());
+	public KubeChemicalBuilder tint(KubeColor tint) {
+		chemicalBuilder().tint(tint.kjs$getRGB());
 		return this;
 	}
 
