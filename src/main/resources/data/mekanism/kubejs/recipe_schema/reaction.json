@@ -35,7 +35,10 @@
 		{
 			"name": "energy_required",
 			"role": "input",
-			"type": "long<0,max>",
+			"type": {
+				"type": "long",
+				"min": 0
+			},
 			"builder_names": ["energy"],
 			"optional": 0
 		}

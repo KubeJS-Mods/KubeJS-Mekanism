@@ -1,6 +1,6 @@
 modLoader = "javafml"
 loaderVersion = "[2,)"
-issueTrackerURL = "https://kubejs.com/support?source=kubejs_mekanism&mc=2100&loader=neoforge"
+issueTrackerURL = "https://kubejs.com/support?source=kubejs_mekanism&mc=2101&loader=neoforge"
 license = "MIT"
 
 [[mods]]

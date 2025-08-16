@@ -2,12 +2,17 @@ package dev.latvian.mods.kubejs.mekanism;
 
 import dev.latvian.mods.kubejs.color.KubeColor;
 import dev.latvian.mods.kubejs.registry.BuilderBase;
+import dev.latvian.mods.kubejs.util.TickDuration;
 import dev.latvian.mods.rhino.util.ReturnsSelf;
+import mekanism.api.MekanismAPITags;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalBuilder;
-import mekanism.api.chemical.attribute.ChemicalAttribute;
-import mekanism.api.chemical.attribute.ChemicalAttributes;
-import mekanism.common.integration.LazyChemicalProvider;
+import mekanism.api.datamaps.chemical.ChemicalSolidTag;
+import mekanism.api.datamaps.chemical.attribute.ChemicalFuel;
+import mekanism.api.datamaps.chemical.attribute.ChemicalRadioactivity;
+import mekanism.api.datamaps.chemical.attribute.CooledCoolant;
+import mekanism.api.datamaps.chemical.attribute.HeatedCoolant;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -62,6 +67,11 @@ public class KubeChemicalBuilder extends BuilderBase<Chemical> {
 	}
 
 	protected ChemicalBuilder chemicalBuilder;
+	public transient ChemicalFuel fuel;
+	public transient HeatedCoolant heatedCoolant;
+	public transient CooledCoolant cooledCoolant;
+	public transient ChemicalRadioactivity radiation;
+	public transient ChemicalSolidTag ore;
 
 	public KubeChemicalBuilder(ResourceLocation id) {
 		super(id);
@@ -75,30 +85,29 @@ public class KubeChemicalBuilder extends BuilderBase<Chemical> {
 		return chemicalBuilder;
 	}
 
-	public KubeChemicalBuilder with(ChemicalAttribute attribute) {
-		chemicalBuilder().with(attribute);
-		return this;
-	}
-
-	public KubeChemicalBuilder fuel(int burnTicks, long energyDensity) {
-		if (burnTicks > 0 && energyDensity > 0L) {
-			return with(new ChemicalAttributes.Fuel(burnTicks, energyDensity));
+	public KubeChemicalBuilder fuel(TickDuration burnTicks, long energyDensity) {
+		if (burnTicks.ticks() > 0 && energyDensity > 0L) {
+			fuel = new ChemicalFuel((int) burnTicks.ticks(), energyDensity);
 		}
 
 		return this;
 	}
 
-	public KubeChemicalBuilder heatedCoolant(ResourceLocation chemical, double thermalEnthalpy, double conductivity) {
+	public KubeChemicalBuilder heatedCoolant(Holder<Chemical> chemical, double thermalEnthalpy, double conductivity, double temperature) {
 		if (thermalEnthalpy > 0D && conductivity > 0D) {
-			return with(new ChemicalAttributes.HeatedCoolant(new LazyChemicalProvider(chemical), thermalEnthalpy, conductivity));
+			heatedCoolant = new HeatedCoolant(chemical, thermalEnthalpy, conductivity, temperature);
 		}
 
 		return this;
 	}
 
-	public KubeChemicalBuilder cooledCoolant(ResourceLocation chemical, double thermalEnthalpy, double conductivity) {
+	public KubeChemicalBuilder heatedCoolant(Holder<Chemical> chemical, double thermalEnthalpy, double conductivity) {
+		return heatedCoolant(chemical, thermalEnthalpy, conductivity, 100_000);
+	}
+
+	public KubeChemicalBuilder cooledCoolant(Holder<Chemical> chemical, double thermalEnthalpy, double conductivity) {
 		if (thermalEnthalpy > 0D && conductivity > 0D) {
-			return with(new ChemicalAttributes.CooledCoolant(new LazyChemicalProvider(chemical), thermalEnthalpy, conductivity));
+			cooledCoolant = new CooledCoolant(chemical, thermalEnthalpy, conductivity);
 		}
 
 		return this;
@@ -106,7 +115,7 @@ public class KubeChemicalBuilder extends BuilderBase<Chemical> {
 
 	public KubeChemicalBuilder radiation(double radioactivity) {
 		if (radioactivity > 0D) {
-			return with(new ChemicalAttributes.Radiation(radioactivity));
+			radiation = new ChemicalRadioactivity(radioactivity);
 		}
 
 		return this;
@@ -118,12 +127,12 @@ public class KubeChemicalBuilder extends BuilderBase<Chemical> {
 	}
 
 	public KubeChemicalBuilder ore(TagKey<Item> oreTag) {
-		chemicalBuilder().ore(oreTag);
+		ore = new ChemicalSolidTag(oreTag);
 		return this;
 	}
 
 	public KubeChemicalBuilder gaseous() {
-		chemicalBuilder().gaseous();
+		tag(new ResourceLocation[]{MekanismAPITags.Chemicals.GASEOUS.location()});
 		return this;
 	}
 

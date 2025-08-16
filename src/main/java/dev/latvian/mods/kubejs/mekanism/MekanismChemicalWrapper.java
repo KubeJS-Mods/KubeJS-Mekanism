@@ -3,6 +3,8 @@ package dev.latvian.mods.kubejs.mekanism;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.latvian.mods.kubejs.fluid.FluidWrapper;
+import dev.latvian.mods.kubejs.holder.HolderWrapper;
+import dev.latvian.mods.kubejs.script.KubeJSContext;
 import dev.latvian.mods.rhino.type.TypeInfo;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import mekanism.api.MekanismAPI;
@@ -15,6 +17,7 @@ import mekanism.api.recipes.ingredients.chemical.DifferenceChemicalIngredient;
 import mekanism.api.recipes.ingredients.chemical.EmptyChemicalIngredient;
 import mekanism.api.recipes.ingredients.chemical.SingleChemicalIngredient;
 import mekanism.api.recipes.ingredients.chemical.TagChemicalIngredient;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -24,28 +27,20 @@ import java.util.List;
 
 public interface MekanismChemicalWrapper {
 	TypeInfo CHEMICAL_TYPE_INFO = TypeInfo.of(Chemical.class);
+	TypeInfo CHEMICAL_HOLDER_TYPE_INFO = TypeInfo.of(Holder.class).withParams(TypeInfo.of(Chemical.class));
 	TypeInfo CHEMICAL_STACK_TYPE_INFO = TypeInfo.of(ChemicalStack.class);
 	TypeInfo CHEMICAL_INGREDIENT_TYPE_INFO = TypeInfo.of(ChemicalIngredient.class);
 	TypeInfo CHEMICAL_STACK_INGREDIENT_TYPE_INFO = TypeInfo.of(ChemicalStackIngredient.class);
 
-	static Chemical of(Object from) {
+	static Holder<Chemical> of(KubeJSContext cx, Object from) {
 		return switch (from) {
-			case null -> MekanismAPI.EMPTY_CHEMICAL;
-			case Chemical c -> c;
-			case ChemicalStack c -> c.getChemical();
-			default -> {
-				var str = from.toString();
-
-				if (str.isEmpty() || str.equals("mekanism:empty")) {
-					yield MekanismAPI.EMPTY_CHEMICAL;
-				} else {
-					yield MekanismAPI.CHEMICAL_REGISTRY.get(ResourceLocation.parse(str));
-				}
-			}
+			case null -> MekanismAPI.EMPTY_CHEMICAL_HOLDER;
+			case ChemicalStack c -> c.getChemicalHolder();
+			default -> (Holder) HolderWrapper.wrap(cx, from, CHEMICAL_TYPE_INFO);
 		};
 	}
 
-	static ChemicalStack stack(Chemical chemical, long amount) {
+	static ChemicalStack stack(Holder<Chemical> chemical, long amount) {
 		return new ChemicalStack(chemical, amount);
 	}
 
@@ -65,7 +60,8 @@ public interface MekanismChemicalWrapper {
 		return switch (from) {
 			case null -> null;
 			case ChemicalStack c -> c;
-			case Chemical c -> new ChemicalStack(c, FluidType.BUCKET_VOLUME);
+			case Chemical c -> new ChemicalStack(c.getAsHolder(), FluidType.BUCKET_VOLUME);
+			case Holder<?> c -> new ChemicalStack((Holder) c, FluidType.BUCKET_VOLUME);
 			default -> {
 				var str = from.toString();
 
@@ -83,9 +79,9 @@ public interface MekanismChemicalWrapper {
 		};
 	}
 
-	static Chemical read(StringReader reader) throws CommandSyntaxException {
+	static Holder<Chemical> read(StringReader reader) throws CommandSyntaxException {
 		reader.skipWhitespace();
-		return MekanismAPI.CHEMICAL_REGISTRY.get(ResourceLocation.read(reader));
+		return MekanismAPI.CHEMICAL_REGISTRY.getHolder(ResourceLocation.read(reader)).get();
 	}
 
 	static ChemicalStack readStack(StringReader reader) throws CommandSyntaxException {
@@ -140,7 +136,7 @@ public interface MekanismChemicalWrapper {
 			return new TagChemicalIngredient(TagKey.create(MekanismAPI.CHEMICAL_REGISTRY_NAME, ResourceLocation.read(reader)));
 		}
 
-		return new SingleChemicalIngredient(read(reader).getAsHolder());
+		return new SingleChemicalIngredient(read(reader));
 	}
 
 	@HideFromJS
