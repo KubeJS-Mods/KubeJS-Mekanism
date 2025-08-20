@@ -8,14 +8,14 @@
 		{
 			"name": "main_output",
 			"role": "output",
-			"type": "item_stack",
-			"optional": null
+			"type": "optional_item_stack",
+			"default_optional": true
 		},
 		{
 			"name": "secondary_output",
 			"role": "output",
-			"type": "item_stack",
-			"optional": null
+			"type": "optional_item_stack",
+			"default_optional": true
 		},
 		{
 			"name": "secondary_chance",
@@ -25,7 +25,7 @@
 				"min": 0.00001,
 				"max": 1.0
 			},
-			"optional": null
+			"default_optional": true
 		}
 	],
 	"unique": ["input"],

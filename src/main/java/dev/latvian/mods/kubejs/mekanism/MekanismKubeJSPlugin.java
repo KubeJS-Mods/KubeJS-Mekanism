@@ -58,7 +58,9 @@ public class MekanismKubeJSPlugin implements KubeJSPlugin {
 	public void registerRecipeComponents(RecipeComponentTypeRegistry registry) {
 		registry.register(ChemicalRecipeComponent.CHEMICAL);
 		registry.register(ChemicalStackRecipeComponent.CHEMICAL_STACK);
+		registry.register(ChemicalStackRecipeComponent.OPTIONAL_CHEMICAL_STACK);
 		registry.register(ChemicalIngredientRecipeComponent.CHEMICAL_INGREDIENT);
+		registry.register(ChemicalIngredientRecipeComponent.OPTIONAL_CHEMICAL_INGREDIENT);
 		registry.register(ChemicalStackIngredientRecipeComponent.CHEMICAL_STACK_INGREDIENT);
 	}
 

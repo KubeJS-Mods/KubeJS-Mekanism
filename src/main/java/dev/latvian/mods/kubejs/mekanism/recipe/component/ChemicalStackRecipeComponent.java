@@ -11,15 +11,21 @@ import mekanism.api.recipes.ingredients.chemical.ChemicalIngredient;
 import mekanism.common.Mekanism;
 
 public class ChemicalStackRecipeComponent extends ChemicalLikeRecipeComponent<ChemicalStack> {
-	public static final RecipeComponentType<ChemicalStack> CHEMICAL_STACK = RecipeComponentType.unit(Mekanism.rl("chemical_stack"), ChemicalStackRecipeComponent::new);
+	public static final RecipeComponentType<ChemicalStack> CHEMICAL_STACK = RecipeComponentType.unit(Mekanism.rl("chemical_stack"), t -> new ChemicalStackRecipeComponent(t, false));
+	public static final RecipeComponentType<ChemicalStack> OPTIONAL_CHEMICAL_STACK = RecipeComponentType.unit(Mekanism.rl("optional_chemical_stack"), t -> new ChemicalStackRecipeComponent(t, true));
 
-	private ChemicalStackRecipeComponent(RecipeComponentType<?> type) {
-		super(type, ChemicalStack.OPTIONAL_CODEC, MekanismChemicalWrapper.CHEMICAL_STACK_TYPE_INFO);
+	private ChemicalStackRecipeComponent(RecipeComponentType<?> type, boolean allowEmpty) {
+		super(type, allowEmpty ? ChemicalStack.OPTIONAL_CODEC : ChemicalStack.CODEC, MekanismChemicalWrapper.CHEMICAL_STACK_TYPE_INFO);
 	}
 
 	@Override
 	public boolean matches(Context cx, KubeRecipe recipe, ChemicalStack value, ReplacementMatchInfo match) {
 		return match.match() instanceof ChemicalIngredient m && !value.isEmpty() && m.test(value.getChemicalHolder());
+	}
+
+	@Override
+	public boolean allowEmpty() {
+		return codec == ChemicalStack.OPTIONAL_CODEC;
 	}
 
 	@Override

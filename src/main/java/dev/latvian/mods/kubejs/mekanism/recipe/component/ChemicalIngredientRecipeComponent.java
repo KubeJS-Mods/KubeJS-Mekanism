@@ -13,15 +13,21 @@ import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess;
 import mekanism.common.Mekanism;
 
 public class ChemicalIngredientRecipeComponent extends ChemicalLikeRecipeComponent<ChemicalIngredient> {
-	public static final RecipeComponentType<ChemicalIngredient> CHEMICAL_INGREDIENT = RecipeComponentType.unit(Mekanism.rl("chemical_ingredient"), ChemicalIngredientRecipeComponent::new);
+	public static final RecipeComponentType<ChemicalIngredient> CHEMICAL_INGREDIENT = RecipeComponentType.unit(Mekanism.rl("chemical_ingredient"), t -> new ChemicalIngredientRecipeComponent(t, false));
+	public static final RecipeComponentType<ChemicalIngredient> OPTIONAL_CHEMICAL_INGREDIENT = RecipeComponentType.unit(Mekanism.rl("optional_chemical_ingredient"), t -> new ChemicalIngredientRecipeComponent(t, true));
 
-	private ChemicalIngredientRecipeComponent(RecipeComponentType<?> type) {
-		super(type, IngredientCreatorAccess.chemical().codec(), MekanismChemicalWrapper.CHEMICAL_INGREDIENT_TYPE_INFO);
+	private ChemicalIngredientRecipeComponent(RecipeComponentType<?> type, boolean allowEmpty) {
+		super(type, allowEmpty ? IngredientCreatorAccess.chemical().codec() : IngredientCreatorAccess.chemical().codecNonEmpty(), MekanismChemicalWrapper.CHEMICAL_INGREDIENT_TYPE_INFO);
 	}
 
 	@Override
 	public boolean matches(Context cx, KubeRecipe recipe, ChemicalIngredient value, ReplacementMatchInfo match) {
 		return match.match() instanceof ChemicalIngredient m && !value.isEmpty() && value.getChemicalHolders().stream().anyMatch(m::test);
+	}
+
+	@Override
+	public boolean allowEmpty() {
+		return codec == IngredientCreatorAccess.chemical().codec();
 	}
 
 	@Override

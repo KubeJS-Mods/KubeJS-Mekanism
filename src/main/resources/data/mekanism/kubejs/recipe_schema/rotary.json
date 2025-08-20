@@ -4,25 +4,25 @@
 			"name": "chemical_output",
 			"role": "output",
 			"type": "mekanism:chemical_stack",
-			"optional": null
+			"default_optional": true
 		},
 		{
 			"name": "fluid_output",
 			"role": "output",
-			"type": "fluid_stack",
-			"optional": null
+			"type": "optional_fluid_stack",
+			"default_optional": true
 		},
 		{
 			"name": "chemical_input",
 			"role": "input",
 			"type": "mekanism:chemical_stack_ingredient",
-			"optional": null
+			"default_optional": true
 		},
 		{
 			"name": "fluid_input",
 			"role": "input",
 			"type": "flat_sized_fluid_ingredient",
-			"optional": null
+			"default_optional": true
 		}
 	],
 	"unique": ["chemical_output", "fluid_output"]

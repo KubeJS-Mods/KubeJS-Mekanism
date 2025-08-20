@@ -23,14 +23,14 @@
 		{
 			"name": "item_output",
 			"role": "output",
-			"type": "item_stack",
-			"optional": null
+			"type": "optional_item_stack",
+			"optional": {}
 		},
 		{
 			"name": "chemical_output",
 			"role": "output",
-			"type": "mekanism:chemical_stack",
-			"optional": null
+			"type": "mekanism:optional_chemical_stack",
+			"optional": {}
 		},
 		{
 			"name": "energy_required",
