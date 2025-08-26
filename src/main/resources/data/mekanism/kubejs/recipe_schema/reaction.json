@@ -18,7 +18,8 @@
 		{
 			"name": "duration",
 			"role": "input",
-			"type": "ticks"
+			"type": "ticks",
+			"optional": 100
 		},
 		{
 			"name": "item_output",
@@ -35,10 +36,7 @@
 		{
 			"name": "energy_required",
 			"role": "input",
-			"type": {
-				"type": "long",
-				"min": 0
-			},
+			"type": "non_negative_long",
 			"builder_names": ["energy"],
 			"optional": 0
 		}
@@ -49,7 +47,13 @@
 			"keys": ["item_output", "chemical_output", "item_input", "fluid_input", "chemical_input", "duration"]
 		},
 		{
+			"keys": ["item_output", "chemical_output", "item_input", "fluid_input", "chemical_input"]
+		},
+		{
 			"keys": ["item_input", "fluid_input", "chemical_input", "duration"]
+		},
+		{
+			"keys": ["item_input", "fluid_input", "chemical_input"]
 		}
 	]
 }

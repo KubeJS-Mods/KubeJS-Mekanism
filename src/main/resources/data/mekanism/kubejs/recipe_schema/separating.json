@@ -17,10 +17,7 @@
 		},
 		{
 			"name": "energy_multiplier",
-			"type": {
-				"type": "long",
-				"min": 1
-			},
+			"type": "positive_long",
 			"optional": 1
 		}
 	],

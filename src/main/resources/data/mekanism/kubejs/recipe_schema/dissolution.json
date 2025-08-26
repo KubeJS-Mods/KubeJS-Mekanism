@@ -17,7 +17,9 @@
 		},
 		{
 			"name": "per_tick_usage",
-			"type": "boolean"
+			"type": "boolean",
+			"optional": false,
+			"always_write": true
 		}
 	],
 	"unique": ["output"]

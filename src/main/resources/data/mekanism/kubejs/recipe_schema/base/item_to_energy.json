@@ -8,10 +8,7 @@
 		{
 			"name": "output",
 			"role": "output",
-			"type": {
-				"type": "long",
-				"min": 1
-			}
+			"type": "positive_long"
 		}
 	],
 	"unique": ["input"]
