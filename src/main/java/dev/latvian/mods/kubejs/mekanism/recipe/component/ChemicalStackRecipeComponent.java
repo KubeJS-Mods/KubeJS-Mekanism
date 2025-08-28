@@ -1,11 +1,10 @@
 package dev.latvian.mods.kubejs.mekanism.recipe.component;
 
 import dev.latvian.mods.kubejs.mekanism.MekanismChemicalWrapper;
-import dev.latvian.mods.kubejs.recipe.KubeRecipe;
 import dev.latvian.mods.kubejs.recipe.component.RecipeComponentType;
 import dev.latvian.mods.kubejs.recipe.component.UniqueIdBuilder;
+import dev.latvian.mods.kubejs.recipe.filter.RecipeMatchContext;
 import dev.latvian.mods.kubejs.recipe.match.ReplacementMatchInfo;
-import dev.latvian.mods.rhino.Context;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.recipes.ingredients.chemical.ChemicalIngredient;
 import mekanism.common.Mekanism;
@@ -19,7 +18,7 @@ public class ChemicalStackRecipeComponent extends ChemicalLikeRecipeComponent<Ch
 	}
 
 	@Override
-	public boolean matches(Context cx, KubeRecipe recipe, ChemicalStack value, ReplacementMatchInfo match) {
+	public boolean matches(RecipeMatchContext cx, ChemicalStack value, ReplacementMatchInfo match) {
 		return match.match() instanceof ChemicalIngredient m && !value.isEmpty() && m.test(value.getChemicalHolder());
 	}
 
