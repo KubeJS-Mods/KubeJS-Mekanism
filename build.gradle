@@ -46,7 +46,7 @@ neoForge {
 	}
 
 	mods {
-		kubejs_mekanism {
+		mod {
 			sourceSet sourceSets.main
 		}
 	}
