@@ -85,6 +85,7 @@ public interface MekanismChemicalWrapper {
 
 	@HideFromJS
 	@Nullable
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	static ChemicalStack wrapStackTrivial(Context cx, Object from) {
 		while (from instanceof Wrapper w) {
 			from = w.unwrap();
@@ -96,7 +97,8 @@ public interface MekanismChemicalWrapper {
 			case null -> ChemicalStack.EMPTY;
 			case ChemicalStack id -> id;
 			case Chemical chem -> wrapStackTrivial(cx, wrapAsHolder(chem));
-			case Holder<Chemical> holder -> holder.is(MekanismAPI.EMPTY_CHEMICAL_KEY) ? ChemicalStack.EMPTY : new ChemicalStack(holder, FluidType.BUCKET_VOLUME);
+			case Holder holder when holder.is(MekanismAPI.EMPTY_CHEMICAL_KEY) -> ChemicalStack.EMPTY;
+			case Holder holder -> new ChemicalStack(holder, FluidType.BUCKET_VOLUME);
 			default -> null;
 		};
 	}
